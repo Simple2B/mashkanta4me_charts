@@ -1,0 +1,78 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.css"
+    integrity="sha256-6pa9Ln4B/FyHlxOYaXuwpET9xH0e21iX0SPLg9P5Ro0=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.js"
+    integrity="sha256-VG+4f1Hm2q4e+DTEOaiZKlWjJm5W4yqnXNvKkWBYA20=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wnumb/1.1.0/wNumb.min.js"
+    integrity="sha256-HT7c4lBipI1Hkl/uvUrU1HQx4WF3oQnSafPjgR9Cn8A=" crossorigin="anonymous"></script>
+
+
+<div class="container text-right">
+
+    <div class="row filter-area">
+        <div class="col-12 col-md-4 col-lg-2 filter-block-interest">
+            <p>תצוגה לפי</p>
+            <ul class="type-select type-select-col">
+                <li>
+                    <input type="radio" id="selectedLTV" name="mortgageSwitchChart" onclick="mortgageSwitchChart(this);"
+                        checked>
+                    <div class="check"></div>
+                    <label for="selectedLTV">יחס הלוואה</label>
+                </li>
+                <li>
+                    <input type="radio" id="selectedBank" name="mortgageSwitchChart"
+                        onclick="mortgageSwitchChart(this);">
+                    <div class="check">
+                        <div class="inside"></div>
+                    </div>
+                    <label for="selectedBank">בנק</label>
+                </li>
+            </ul>
+
+        </div>
+        <div class="col-12 col-md-4 col-lg-2 filter-block-interest">
+            <p>משך השנים</p>
+            <div id="sliderYears"></div>
+        </div>
+        <div class="col-12 col-md-4 col-lg-3 filter-block-interest">
+            <p>יחס הלוואה</p>
+            <ul class="p-0 mb-0">
+                <li class="d-inline-block mb-1">
+                    <span id="LTV45" class="badge badge-secondary chip ml-1">עד 45%</span>
+                </li>
+                <li class="d-inline-block mb-1">
+                    <span id="LTV45-60" class="badge badge-secondary chip ml-1">45% - 60%</span>
+                </li>
+                <li class="d-inline-block mb-1">
+                    <span id="LTV60" class="badge badge-secondary chip">מעל 60%</span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-12 col-md-6 col-lg-2 filter-block-interest">
+            <p>ריבית שנתית</p>
+            <div id="sliderInterest"></div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 filter-block-interest">
+            <p>הבנק</p>
+            <ul class="p-0 mb-0">
+                <li class="d-inline-block mb-1">
+                    <span id="הבינלאומי" class="badge badge-secondary chip ml-1">הבינלאומי</span>
+                </li>
+                <li class="d-inline-block mb-1">
+                    <span id="מזרחי-טפחות" class="badge badge-secondary chip ml-1">מזרחי-טפחות</span>
+                </li>
+                <li class="d-inline-block mb-1">
+                    <span id="דיסקונט" class="badge badge-secondary chip ml-1">דיסקונט</span>
+                </li>
+                <li class="d-inline-block mb-1">
+                    <span id="לאומי" class="badge badge-secondary chip ml-1">לאומי</span>
+                </li>
+                <li class="d-inline-block mb-1">
+                    <span id="פועלים" class="badge badge-secondary chip ml-1">פועלים</span>
+                </li>
+                <li class="d-inline-block mb-1">
+                    <span id="אגוד" class="badge badge-secondary chip ml-1">אגוד</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
