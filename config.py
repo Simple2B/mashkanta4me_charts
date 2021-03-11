@@ -3,6 +3,7 @@ from pathlib import Path
 
 base_dir = Path('.').resolve()
 
+
 class BaseConfig(object):
     """Base configuration."""
 
