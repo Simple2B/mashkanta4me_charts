@@ -1,4 +1,8 @@
-from server import app
+#!/usr/bin/env python
 
-if __name__ == "__main__":
+from app import create_app
+
+app = create_app()
+
+if __name__ == '__main__':
     app.run()
