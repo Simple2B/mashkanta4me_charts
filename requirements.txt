@@ -20,4 +20,7 @@ six
 soupsieve
 urllib3
 Werkzeug
+python-dotenv
+Flask-SQLAlchemy
+Flask-Login
 xlrd==1.2.0

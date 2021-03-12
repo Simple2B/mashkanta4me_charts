@@ -7,7 +7,7 @@
  * 
  */
 
-define('UUID_LENGTH', 36);
+define('UUID_LENGTH', 60);
 
 register_activation_hook( __FILE__, 'create_tmp_key_table' );
 

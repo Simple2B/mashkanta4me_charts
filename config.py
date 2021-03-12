@@ -1,7 +1,12 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+from pathlib import Path
+
 
 base_dir = Path('.').resolve()
+env_path = Path('.') / '.env'
+load_dotenv(dotenv_path=env_path)
 
 
 class BaseConfig(object):
@@ -23,8 +28,7 @@ class DevelopmentConfig(BaseConfig):
     """Development configuration."""
 
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DEVEL_DATABASE_URL', 'sqlite:///' + os.path.join(base_dir, 'database-devel.sqlite3'))
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL_DEV')
 
 
 class TestingConfig(BaseConfig):
@@ -39,8 +43,7 @@ class TestingConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     """Production configuration."""
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL', 'sqlite:///' + os.path.join(base_dir, 'database.sqlite3'))
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     WTF_CSRF_ENABLED = True
 
 

@@ -1,0 +1,24 @@
+general:
+    /
+    /admin
+    /update_data
+
+bp_interest
+    /constant_WO_cpi_index
+    /constant_W_cpi_index
+    /eligibility
+    /prime_index
+    /variable_WO_cpi_index
+    /variable_W_cpi_index
+
+bp_analytics
+    /analytics
+
+bp_economic_expect
+    /InterestFile_Prime
+    /InterestFile_Inflation
+    /InterestFile_Variable_W_CPI
+    /InterestFile_Variable_WO_CPI
+
+bp_interest_level
+    /historical
