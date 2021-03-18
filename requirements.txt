@@ -21,6 +21,8 @@ soupsieve
 urllib3
 Werkzeug
 python-dotenv
+pytest
 Flask-SQLAlchemy
 Flask-Login
+mysqlclient
 xlrd==1.2.0

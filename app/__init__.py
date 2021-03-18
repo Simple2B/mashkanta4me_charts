@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from werkzeug.exceptions import HTTPException
@@ -10,6 +10,15 @@ login_manager = LoginManager()
 db = SQLAlchemy()
 
 
+class AppWithRoot(Flask):
+    def __init__(self, name):
+        super().__init__(name)
+
+    def __call__(self, environ, start_response):
+        environ['SCRIPT_NAME'] = os.environ.get('APP_ROOT', '')
+        return super().__call__(environ, start_response)
+
+
 def create_app(environment='development'):
     from config import config
     from app.views import (
@@ -17,6 +26,7 @@ def create_app(environment='development'):
         bp_analytics,
         bp_economic_expect,
         bp_historical,
+        bp_index,
     )
 
     from app.models import (
@@ -25,7 +35,7 @@ def create_app(environment='development'):
     )
 
     # Instantiate app.
-    app = Flask(__name__)
+    app = AppWithRoot(__name__)
 
     # Set app config.
     env = os.environ.get('FLASK_ENV', environment)
@@ -41,6 +51,7 @@ def create_app(environment='development'):
     app.register_blueprint(bp_analytics)
     app.register_blueprint(bp_economic_expect)
     app.register_blueprint(bp_historical)
+    app.register_blueprint(bp_index)
 
     # Set up flask login.
     @login_manager.user_loader
@@ -50,10 +61,5 @@ def create_app(environment='development'):
     login_manager.login_view = 'auth.login'
     login_manager.login_message_category = 'info'
     login_manager.anonymous_user = AnonymousUser
-
-    # Error handlers.
-    @app.errorhandler(HTTPException)
-    def handle_http_error(exc):
-        return render_template('error.html', error=exc), exc.code
 
     return app

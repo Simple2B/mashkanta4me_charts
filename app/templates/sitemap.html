@@ -4,31 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>mashkanta4me charts sitemap</title>
-
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
-
 </head>
 
 <body>
     <div class="filters-form">
         <h1>Available plots</h1>
         <ul>
-            {% for item in data %}
+            {% for route in data %}
             <li class="mashkanta-sitemap-li">
-                <a class="mashkanta-sitemap-li-link" href="{{item[0]}}">
-                    https://mashkanta4me.herokuapp.com/{{ item[1] }} </a>
+                <a class="mashkanta-sitemap-li-link" href="{{url_for(route)}}">{{ route }}</a>
             </li>
             {% endfor %}
         </ul>
     </div>
 
     <h1 class="mt-50 ml-10 mb-0">iframes</h1>
-    {% for item in data %}
+    {% for route in data %}
     <div class="mashkanta-full-width-wrapper">
-        <h2> {{ item[1] }}</h2>
-        <iframe id="mortgageIframe{{loop.index}}" class="mashkanta-full-width" src="{{item[0]}}"> </iframe>
+        <h2> {{ route }}</h2>
+        <iframe id="mortgageIframe{{loop.index}}" class="mashkanta-full-width" src="{{url_for(route)}}"> </iframe>
     </div>
     {% endfor %}
 

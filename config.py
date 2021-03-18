@@ -11,8 +11,7 @@ load_dotenv(dotenv_path=env_path)
 
 class BaseConfig(object):
     """Base configuration."""
-
-    APP_NAME = 'Flask App'
+    APP_NAME = 'Mashkanta flask app'
     DEBUG_TB_ENABLED = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'Ensure you set a secret key, this is important!')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -26,14 +25,13 @@ class BaseConfig(object):
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration."""
-
+    # SCRIPT_NAME = "/dash/"
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL_DEV')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DB_ENDPOINT_DEV')
 
 
 class TestingConfig(BaseConfig):
     """Testing configuration."""
-
     TESTING = True
     PRESERVE_CONTEXT_ON_EXCEPTION = False
     SQLALCHEMY_DATABASE_URI = os.environ.get(
@@ -42,8 +40,7 @@ class TestingConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     """Production configuration."""
-
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DB_ENDPOINT')
     WTF_CSRF_ENABLED = True
 
 

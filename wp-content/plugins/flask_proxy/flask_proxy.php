@@ -39,15 +39,18 @@ function write_flask_key($user_login, $user) {
     global $wpdb;
     $keys_table = $wpdb->prefix . 'proxy_tmp_keys';
     $uuid = file_get_contents('/proc/sys/kernel/random/uuid');
-    
-    $wpdb->insert($keys_table, 
+
+    $wpdb->insert($keys_table,
         [
-            'uuid' => $uuid, 
+            'uuid' => $uuid,
             'wp_user_id' => $user->ID,
             'roles' => implode(',', $user->roles)
         ],
         ['%s', '%d', '%s']
     );
+
+    $cookie_value = ['key_id' => $wpdb->insert_id, 'uuid' => $uuid, 'user_role' => 'test_role'];
+    setrawcookie('wp_auth', json_encode($cookie_value));
 }
 
 add_action('wp_login', 'write_flask_key', 10, 2);
