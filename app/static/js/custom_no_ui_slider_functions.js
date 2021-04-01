@@ -12,11 +12,11 @@ function initSliderTooltipPosition(sliderId) {
 
 function moveSliderTooltipPosition(slider, leftTip, rightTip) {
     let sliderPosition = slider.getBoundingClientRect()
-    
+
     leftTip.style.transform = ''
     rightTip.style.transform = ''
     let spacer = 10
-    
+
     let leftTipPosition = leftTip.getBoundingClientRect()
     let rightTipPosition = rightTip.getBoundingClientRect()
 

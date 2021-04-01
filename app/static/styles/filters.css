@@ -166,3 +166,7 @@
 .form-filter {
     padding: 10px;
 }
+
+div .grey-on-disabled {
+    border: 4px solid rgb(180, 180, 180, .8) !important;
+}

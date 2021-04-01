@@ -1,101 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>mashkanta4me charts</title>
-
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap-grid.min.css" integrity="sha256-D9AvR0EzkNZoWZVSvI3ch+uf/Z5izrIpcbsykVphwPU=" crossorigin="anonymous" /> -->
-    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script> -->
-
-    <!-- App -->
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
-
-    <!-- Moment.js -->
-{% if filter_form == 'historical' or filter_form == 'analytics' or filter_form == 'interest' %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/filters_chart_switch.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js"></script>
-{% endif %}
-
-    <!-- Chart.js -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4/dist/chartjs-plugin-zoom.min.js"></script>
-
-    <!-- iframe resize -->
-    <!-- https://github.com/davidjbradshaw/iframe-resizer -->
-    <script src="{{ url_for('static', filename='js/iframeResizer.contentWindow.min.js') }}"></script>
-
-</head>
-
-
-<body dir="rtl">
-
-    <!--  Chart.JS configurations  -->
-    <script>
-        Chart.defaults.global.defaultFontColor = 'rgb(255, 255, 255)';
-        Chart.defaults.global.defaultFontFamily = "'Roboto', sans-serif";
-        Chart.defaults.global.defaultFontSize = 14;
-        Chart.defaults.global.legend.labels.usePointStyle = true;
-    </script>
-
-    <script src="{{ url_for('static', filename='js/custom_chartjs_functions.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/custom_no_ui_slider_functions.js') }}"></script> 
-    <script src="{{ url_for('static', filename='js/chartjs_bar_curve.js') }}"></script>
-
-    {% if filter_form != 'economic_expectations_bar' and filter_form != 'economic_expectations_line' %}
-    <!-- filter data form -->
-    {% include 'filters/%s.html' % filter_form %}
-    {% include 'filters/reload.html' %}
-    {% endif %}
-
-    <!-- Chart canvas -->
-    <div class="container" dir="rtl" style="text-align: right;">
-        <canvas dir="rtl" id="mortgageChart" width="400" height="400"></canvas>
-    </div>
-
-    <!--  JSON data  -->
-    <script>
-    {% if filter_form == 'historical' %}
-        var dataSetReal = {{ data_set["real"] | tojson }};
-        var dataSetNominal = {{ data_set["nominal"] | tojson }};
-        var dataSet = dataSetReal;
-    {% elif filter_form == 'analytics' %}
-        var dataSetChangeMonthly = {{ data_set["change_monthly"] | tojson }};
-        var dataSetLoanCost = {{ data_set["loan_cost"] | tojson }};
-        var dataSetPrincipalHalved = {{ data_set["principal_halved"] | tojson }};
-        var dataSet = dataSetChangeMonthly;
-    {% elif filter_form == 'interest' %}
-        var dataSetArray = {{ data_set | tojson }};
-        var dataSet = JSON.parse(dataSetArray[0]);
-    {% else %}
-        var dataSet = {{ data_set | tojson }};
-    {% endif %}
-    </script>
-
-    <!--  Display charts  -->
-    <script src="{{ url_for('static', filename='js/') }}{{ filter_form }}{{'.js'}}"></script>
-
-    {% if filter_form != 'economic_expectations_bar' and filter_form != 'economic_expectations_line' %}
-    <script src="{{ url_for('static', filename='js/') }}{{ filter_form }}{{'_filter.js'}}"></script>
-    {% endif %}
-
-</body>
-
-</html>
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.4/dist/chartjs-plugin-zoom.min.js"></script>
+<!-- iframe resize -->
+<!-- https://github.com/davidjbradshaw/iframe-resizer -->
+<script src="{{ url_for('static', filename='js/iframeResizer.contentWindow.min.js') }}"></script>
+{% endblock %}
+{% block body %}
+<script src="{{ url_for('static', filename='js/chart_config.js') }}"></script>
+<script src="{{ url_for('static', filename='js/custom_chartjs_functions.js') }}"></script>
+<script src="{{ url_for('static', filename='js/custom_no_ui_slider_functions.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chartjs_bar_curve.js') }}"></script>
+{% endblock %}

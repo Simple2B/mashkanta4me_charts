@@ -1,0 +1,27 @@
+{% extends "dashboard_with_date.html" %}
+
+{% block title %}Historical{% endblock %}
+
+{% block body %}
+<div class="filter-wrapper"></div>
+{% include 'filters/historical.html' %}
+{{ super() }}
+{% endblock %}
+
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/historical_chart_config.js') }}"></script>
+<script src="{{ url_for('static', filename='js/historical_global_data.js') }}"></script>
+
+{% if role == 'unregistered' %}
+<script src="{{ url_for('static', filename='js/historical_inactive_filter.js') }}"></script>
+{% else %}
+<script src="{{ url_for('static', filename='js/historical_active_filter.js') }}"></script>
+<script src="{{ url_for('static', filename='js/historical_registered_utils.js') }}"></script>
+{% endif %}
+
+{{ load_scripts(['custom_chartjs_functions', 'mortgage_chart', 'historical_dashboard', 'historical']) }}
+
+
+
+{% endblock %}

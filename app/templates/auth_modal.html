@@ -1,0 +1,43 @@
+<div id="auth-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close close-modal" data-dismiss="modal">&times;</button>
+          <div class="modal-title">הרשמה</div>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-auth-form">
+          <form id="modal-auth-form" action="#" method="post">
+            <div class="form-group">
+              <label for="auth-user-email">הזינו כתובת מייל</label>
+              <input id="auth-user-email" type="email" name="auth-user-email" required="required" class="form-control" placeholder="example@mail.com">
+              <div class="error-message" data-default-message='אנא הכנס כתובת דו"ל חוקית'></div>
+            </div>
+
+            <div class="form-group">
+              <label for="auth-user-login">הזינו שם משתמש</label>
+              <input id="auth-user-login" type="text" name="auth-user-login" required="required" class="form-control" placeholder="Enter your name or nickname">
+              <div class="error-message" data-defult-message="Login must be over 3 characters"></div>
+            </div>
+            <div class="form-group">
+              <label for="auth-user-pass">מה הסיסמה שלכם</label>
+              <input id="auth-user-pass" type="password" name="auth-user-pass" required="required" class="form-control" placeholder="הסיסמה הסודית שלי">
+              <div class="error-message" data-default-message="סיסמא לא נכונה"></div>
+            </div>
+
+            <div class="form-group with-button">
+              <button class="btn btn-primary wp-send-auth" type="btn">הירשם כמשתמש חדש לאתר</button>
+            </div>
+          </form>
+
+          <h4 id="auth-email-message" class="hidden">"בדקו את תיבת הדואר האלקטרוני שלכם - שלחנו לכם מייל"</h4>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default close-modal" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

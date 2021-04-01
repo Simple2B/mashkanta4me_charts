@@ -1,16 +1,17 @@
-from flask_login import UserMixin, AnonymousUserMixin
-from app import db
+from flask_login import AnonymousUserMixin, UserMixin
+from app.models.wp_auth import WpAuthKey
+from app.models.utils import ModelMixin
+from app.models.db import db
+
+class AnonUser(AnonymousUserMixin):
+    role = 'unregistered'
 
 
-class User(db.Model, UserMixin):
-    __tablename__ = 'wpti_users'
+class User(UserMixin, db.Model, ModelMixin):
+    __tablename__ = 'dashboard_users'
 
-    ID = db.Column(db.Integer, primary_key=True)
-    user_login = db.Column(db.String(60), unique=True, nullable=False)
+    id = db.Column(db.BigInteger(), primary_key=True)
+    role = db.Column(db.String(255))
 
     def __str__(self):
-        return '<User: %s>' % self.user_login
-
-
-class AnonymousUser(AnonymousUserMixin):
-    pass
+        return f"id: {self.id}, role: {self.role}"

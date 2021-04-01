@@ -11,9 +11,9 @@ html {
 body {
     margin: 0;
     min-height: 100%;
-    background-color: var(--main-blue);
-    color: rgb(255, 255, 255);
-    font-family: "Roboto", sans-serif;
+    background-color: var(--main-blue) !important;
+    color: rgb(255, 255, 255) !important;
+    font-family: "Roboto", sans-serif !important;
 }
 
 .wrapper {
@@ -24,7 +24,7 @@ canvas {
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
-    touch-action: auto !important; 
+    touch-action: auto !important;
     -webkit-user-drag: auto !important;
 }
 
@@ -43,10 +43,10 @@ canvas {
 }
 
 .reload-page-btn {
-    padding: 10px 15px;
-    border-radius: 10px;
-    color: var(--main-blue);
-    background: rgb(255, 255, 255);
+    padding: 10px 15px !important;
+    border-radius: 10px !important;
+    color: var(--main-blue) !important;
+    background-color: rgb(255, 255, 255) !important;
 }
 
 .reload-page-btn:hover {

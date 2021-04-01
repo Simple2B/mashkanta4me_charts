@@ -3,3 +3,4 @@ from app.views.analytics import bp_analytics
 from app.views.economic_expect import bp_economic_expect
 from app.views.historical import bp_historical
 from app.views.index import bp_index
+from app.views.api import bp_api

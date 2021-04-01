@@ -15,7 +15,6 @@ var mortgageOptions = {
     }
 }
 
-
 var mortgageAddComma = (value, index, values) => {
     if(Math.abs(parseInt(value)) >= 1000){
         value = parseInt(value)
@@ -39,14 +38,6 @@ var mortgageAnalyticsTooltip = (tooltipItem, data) => {
     var monthlyReturn = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].y || '';
     let mortgageAmount = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].x || '';
     let label = 'משכנתה בגובה: ' + mortgageAddComma(mortgageAmount) + ' ש״ח, תשלום חודשי ראשוני: ' + monthlyReturn + ' ש״ח';
-    return label;
-}
-
-var mortgageHistoricalTooltip = (tooltipItem, data) => {
-    var morgageInterest = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].y || '';
-    let mortgageYears = data.datasets[tooltipItem.datasetIndex].label || '';
-    let sign = morgageInterest >= 0 ? '' : '-'
-    let label = 'תקופה: ' + mortgageYears + ', ריבית: ' + Math.abs(morgageInterest).toFixed(2) + sign + ' [%]';
     return label;
 }
 

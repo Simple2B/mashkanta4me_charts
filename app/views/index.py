@@ -1,6 +1,7 @@
 import json
-from flask import Blueprint, render_template, url_for, request, app
-from app.models.user import User
+from flask import Blueprint, render_template, url_for, request, app, redirect
+from flask_login import current_user, logout_user
+
 
 bp_index = Blueprint('index', __name__)
 DASHBOARD_ENDPOINTS = (
@@ -21,15 +22,6 @@ DASHBOARD_ENDPOINTS = (
 
 @bp_index.route("/")
 def home():
-    cookies = request.cookies.get('wp_auth', 'no cookie:(')
-    import json
-    from urllib.parse import unquote
-
-    data = unquote(cookies)
-    data = json.loads(data)
-
-    print(data)
-
     return render_template("sitemap.html", data=DASHBOARD_ENDPOINTS)
 
 
@@ -51,3 +43,8 @@ def update_data_route():
     else:
         return flask.redirect(url_for('admin', password_error_message='wrong password'))
 
+# TODO remove in future
+@bp_index.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('historical.historical'))
