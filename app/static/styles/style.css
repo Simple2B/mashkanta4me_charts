@@ -1,7 +1,6 @@
 @import 'filters.css';
-@import 'auth_modal.css';
-@import 'auth_modal_copy.css';
-@import 'login_modal_copy.css';
+@import 'auth_modal_.css';
+@import 'login_modal.css';
 :root {
     --main-blue: rgba(59, 118, 240, 1);
 }

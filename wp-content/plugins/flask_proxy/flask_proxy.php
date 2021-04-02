@@ -80,7 +80,7 @@ function flask_auth() {
   // check if POST data valid
   $errors_args = [];
 
-  if ( empty($_POST['email'] ) || empty( $_POST['pass'] )) {
+  if ( empty($_POST['email'] ) || empty( $_POST['pass'] ) || empty($_POST['remember'])) {
       $errors_args['error'] = 'Error data';
       $errors_args['message'] = "Data is not valid";
       wp_send_json_error( $errors_args );
@@ -88,6 +88,7 @@ function flask_auth() {
 
   $email = sanitize_email( $_POST['email'] );
   $pass = sanitize_text_field( $_POST['pass'] );
+  $remember = $_POST['remember'];
 
   // email check
   if ( ! $email ) {
@@ -112,7 +113,7 @@ function flask_auth() {
       wp_send_json_error( $errors_args );
   } 
 
-  $success = wp_signon(['user_login' => $user->user_login, 'user_password' => $pass], true);
+  $success = wp_signon(['user_login' => $user->user_login, 'user_password' => $pass, 'remember' => $remember], true);
   if (!is_wp_error($success)){
       wp_send_json_success();
   }
