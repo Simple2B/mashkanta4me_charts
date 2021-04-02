@@ -27,10 +27,10 @@
     <script src="{{url_for('static', filename='js/bootstrap.bundle.min.js')}} " integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf " crossorigin="anonymous "></script>
     <script src="{{ url_for( 'static', filename='js/cookies_handler.js' ) }} "></script>
 
-    {% if role == 'unregistered' %} {% include "auth_modal.html" %}
+    {% if role == 'unregistered' %} {% include "auth_modal_copy.html" %}
     <script src="{{url_for('static', filename='js/jquery-3.6.0.min.js')}}"></script>
     <script src=" {{ url_for( 'static', filename='js/auth_modal.js' ) }} "></script>
-    {% endif %}
+    {% endif %} {% include "login_modal_copy.html" %}
 </body>
 
 </html>
