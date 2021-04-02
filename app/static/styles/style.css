@@ -1,5 +1,5 @@
 @import 'filters.css';
-
+@import 'auth_modal.css';
 :root {
     --main-blue: rgba(59, 118, 240, 1);
 }
@@ -36,7 +36,6 @@ canvas {
     from {
         opacity: 0;
     }
-
     to {
         opacity: 1;
     }
@@ -83,7 +82,6 @@ canvas {
     /* width: calc(100%-40px); */
     max-width: 100%;
     word-wrap: break-word;
-
 }
 
 .mashkanta-full-width {
