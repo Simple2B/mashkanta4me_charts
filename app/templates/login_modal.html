@@ -1,0 +1,66 @@
+<div class="authorization-modal login" id="authorizationModal">
+    <div class="modal-wrap">
+        <div class="modal-title-wrap">
+            <div class="modal-title">
+                כניסה למשתמשים </div>
+        </div>
+        <div class="modal-login-form-wrap">
+            <div class="modal-login-form">
+                <form id="modal-login-form" action="#" method="post">
+                    <input type="hidden" id="__ajax_nonce" name="__ajax_nonce" value="f4abfb9bdf"><input type="hidden" name="_wp_http_referer" value="/forum/">
+                    <div class="modal-user-logo">
+                        <svg width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M18 78V81H24V78H18ZM66 78V81H72V78H66ZM24 78V75H18V78H24ZM39 60H51V54H39V60ZM66 75V78H72V75H66ZM51 60C54.9782 60 58.7936 61.5804 61.6066 64.3934C64.4196 67.2064 66 71.0218 66 75H72C72 69.4305 69.7875 64.089 65.8492 60.1508C61.911 56.2125 56.5695 54 51 54V60ZM24 75C24 71.0218 25.5804 67.2064 28.3934 64.3934C31.2064 61.5804 35.0218 60 39 60V54C33.4305 54 28.089 56.2125 24.1508 60.1508C20.2125 64.089 18 69.4305 18 75H24ZM45 18C41.0218 18 37.2064 19.5804 34.3934 22.3934C31.5804 25.2064 30 29.0218 30 33H36C36 30.6131 36.9482 28.3239 38.636 26.636C40.3239 24.9482 42.6131 24 45 24V18ZM60 33C60 29.0218 58.4196 25.2064 55.6066 22.3934C52.7936 19.5804 48.9782 18 45 18V24C47.3869 24 49.6761 24.9482 51.364 26.636C53.0518 28.3239 54 30.6131 54 33H60ZM45 48C48.9782 48 52.7936 46.4196 55.6066 43.6066C58.4196 40.7936 60 36.9782 60 33H54C54 35.3869 53.0518 37.6761 51.364 39.364C49.6761 41.0518 47.3869 42 45 42V48ZM45 42C42.6131 42 40.3239 41.0518 38.636 39.364C36.9482 37.6761 36 35.3869 36 33H30C30 36.9782 31.5804 40.7936 34.3934 43.6066C37.2064 46.4196 41.0218 48 45 48V42ZM45 84C34.6566 84 24.7368 79.8911 17.4228 72.5772C10.1089 65.2632 6 55.3434 6 45H0C0 56.9347 4.74106 68.3807 13.1802 76.8198C21.6193 85.2589 33.0653 90 45 90V84ZM84 45C84 50.1216 82.9912 55.193 81.0313 59.9247C79.0714 64.6563 76.1987 68.9557 72.5772 72.5772C68.9557 76.1987 64.6563 79.0714 59.9247 81.0313C55.193 82.9912 50.1216 84 45 84V90C56.9347 90 68.3807 85.2589 76.8198 76.8198C85.2589 68.3807 90 56.9347 90 45H84ZM45 6C50.1216 6 55.193 7.00876 59.9247 8.9687C64.6563 10.9286 68.9557 13.8014 72.5772 17.4228C76.1987 21.0443 79.0714 25.3436 81.0313 30.0753C82.9912 34.807 84 39.8784 84 45H90C90 33.0653 85.2589 21.6193 76.8198 13.1802C68.3807 4.74106 56.9347 0 45 0V6ZM45 0C33.0653 0 21.6193 4.74106 13.1802 13.1802C4.74106 21.6193 0 33.0653 0 45H6C6 34.6566 10.1089 24.7368 17.4228 17.4228C24.7368 10.1089 34.6566 6 45 6V0Z" fill="#E7F1FB"></path>
+                      </svg>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-user-email">
+                          הזינו כתובת מייל                        </label>
+                        <input id="login-user-email" type="email" name="user-mail" required="required" class="form-control" placeholder="example@mail.com">
+                        <div class="error-message" data-default-message="תיקוח ל&quot;אוד תבותכ סנכה אנא"></div>
+                        <div id="err-email">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-user-pass">
+                          הזינו סיסמה                        </label>
+                        <input id="login-user-pass" type="password" name="user-pass" required="required" class="form-control" placeholder="••••••••••••">
+                        <div class="error-message" data-default-message="סיסמא לא נכונה"></div>
+                        <div id="err-pass">
+                        </div>
+                    </div>
+                    <div class="form-group with-checkbox">
+                        <label for="login-user-remember">
+                          זכור אותי בכניסות הבאות                            <input id="login-user-remember" type="checkbox" name="user-remember">
+                          <span class="checkmark"></span>
+                      </label>
+                    </div>
+                    <div class="form-group with-button">
+                        <button type="submit">
+                          כניסה                        </button>
+                    </div>
+                    <div class="form-divider">
+                        <span>או</span>
+                    </div>
+                    <div class="form-group with-button">
+                        <button type="button" id="show-register">
+                          הירשמו לאתר                        </button>
+                    </div>
+                    <div>
+                        <span id="show-forgot">
+
+                          שכחת ססמה?
+                      </span>
+                    </div>
+                    <div id="g-recaptcha-login" class="g-recaptcha" data-sitekey="6LdOL94ZAAAAAOlVtr9A9FiaRXEKOKObkoTO6kEt" data-size="invisible">
+                        <div class="grecaptcha-badge" data-style="bottomright" style="width: 256px; height: 60px; position: fixed; visibility: hidden; display: block; transition: right 0.3s ease 0s; bottom: 14px; right: -186px; box-shadow: gray 0px 0px 5px; border-radius: 2px; overflow: hidden;">
+                            <div class="grecaptcha-logo"><iframe src="https://www.google.com/recaptcha/api2/anchor?ar=2&amp;k=6LdOL94ZAAAAAOlVtr9A9FiaRXEKOKObkoTO6kEt&amp;co=aHR0cHM6Ly93d3cubWFzaGthbnRhNC5tZTo0NDM.&amp;hl=uk&amp;v=5mNs27FP3uLBP3KBPib88r1g&amp;size=invisible&amp;cb=3tm55n91ci9i"
+                                    width="256" height="60" role="presentation" name="a-z3k02kkyrw9v" frameborder="0" scrolling="no" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-top-navigation allow-modals allow-popups-to-escape-sandbox"></iframe></div>
+                            <div class="grecaptcha-error"></div><textarea id="g-recaptcha-response" name="g-recaptcha-response" class="g-recaptcha-response" style="width: 250px; height: 40px; border: 1px solid rgb(193, 193, 193); margin: 10px 25px; padding: 0px; resize: none; display: none;"></textarea></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="close-modal-popup" id="closeModalPopup"></div>
+    </div>
+</div>
