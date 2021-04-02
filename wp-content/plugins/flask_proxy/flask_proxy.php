@@ -76,8 +76,51 @@ function write_flask_key($user_login, $user) {
 }
 
 function flask_auth() {
-    echo "flask";
-    wp_die();
+  header('Content-Type: application/json');
+  // check if POST data valid
+  $errors_args = [];
+
+  if ( empty($_POST['email'] ) || empty( $_POST['pass'] )) {
+      $errors_args['error'] = 'Error data';
+      $errors_args['message'] = "Data is not valid";
+      wp_send_json_error( $errors_args );
+  }
+
+  $email = sanitize_email( $_POST['email'] );
+  $pass = sanitize_text_field( $_POST['pass'] );
+
+  // email check
+  if ( ! $email ) {
+      $errors_args['error'] = 'email';
+      $errors_args['message'] = 'invalid email';
+      wp_send_json_error( $errors_args );
+  }
+
+  $user = get_user_by('email', $email ); 
+  if ( ! $user ) {
+
+      $errors_args['error'] = 'email';
+      $errors_args['message'] = 'user not found';
+
+      wp_send_json_error( $errors_args );
+  }
+
+  if ( function_exists( 'user_verification_is_verified' ) && ! user_verification_is_verified( $user->ID ) ) {
+
+      $errors_args['error'] = 'email';
+      $errors_args['message'] = 'user not varified';
+      wp_send_json_error( $errors_args );
+  } 
+
+  $success = wp_signon(['user_login' => $user->user_login, 'user_password' => $pass], true);
+  if (!is_wp_error($success)){
+      wp_send_json_success();
+  }
+
+  $errors_args['error'] = 'pass';
+  $errors_args['message'] = $success->get_error_message();
+
+  wp_send_json_error( $errors_args );
 }
 
 add_action('wp_login', 'write_flask_key', 10, 2);

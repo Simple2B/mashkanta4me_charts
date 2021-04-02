@@ -26,20 +26,55 @@ for (let i = 0, n = greyOn.length; i < n; i++) {
 };
 
 const form = document.getElementById('modal-auth-form');
+const mailError = document.getElementById('err-email');
+const passErr = document.getElementById('err-pass');
 
 
 document.addEventListener("DOMContentLoaded", function(event) {
     form.addEventListener('submit', (evt) => {
         evt.preventDefault();
+        const email = formatData(document.getElementById('auth-user-email').value);
+        const pass = document.getElementById('auth-user-pass').value.trim();
         const data = {
             action: 'flask_auth',
-            whatever: 1234
+            email: email,
+            pass: pass,
         };
+
+        mailError.innerHTML = " ";
+        mailError.innerHTML = " ";
+        $.ajaxSetup({
+            crossDomain: true,
+            xhrFields: {
+                withCredentials: true
+            },
+        });
+
         $.post('http://127.0.0.1:8080/wp-admin/admin-ajax.php', data, (res) => {
             console.log(res);
+            if (res.success) {
+                document.location.reload();
+            }
+            if (res.data.error === "email") {
+
+                mailError.innerHTML = res.data.message
+
+            } else {
+
+                passErr.innerHTML = res.data.message
+            }
         })
 
 
         return false;
     });
 });
+
+
+function formatData(strData) {
+    return strData.toLowerCase().trim();
+}
+
+function renderError(err) {
+
+}
