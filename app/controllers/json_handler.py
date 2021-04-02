@@ -1,5 +1,4 @@
 import json
-import demjson
 import re
 from pathlib import Path
 from flask import url_for, jsonify
