@@ -5,6 +5,8 @@ from urllib.parse import unquote
 from flask import Flask, abort, request, Response, session
 from flask_login import LoginManager, current_user, login_user
 from werkzeug.exceptions import HTTPException
+from flask_cors import CORS
+
 from app.models import db, AnonUser, User, WpAuthKey
 from config import config
 from app.views import (
@@ -15,7 +17,6 @@ from app.views import (
     bp_api,
     bp_index,
 )
-from flask_cors import CORS
 
 # instantiate extensions
 login_manager = LoginManager()
@@ -23,7 +24,7 @@ login_manager = LoginManager()
 
 class AppWithRoot(Flask):
     def __call__(self, environ, start_response):
-        #environ['SCRIPT_NAME'] = os.environ.get('APP_ROOT', '')
+        environ['SCRIPT_NAME'] = os.environ.get('APP_ROOT', '')
         return super().__call__(environ, start_response)
 
 

@@ -72,7 +72,7 @@ function write_flask_key($user_login, $user) {
     );
 
     $cookie_value = ['key_id' => $wpdb->insert_id, 'uuid' => $uuid];
-    setcookie('wp_auth', json_encode($cookie_value), time() + (10 * 365 * 24 * 60 * 60));
+    setcookie('wp_auth', json_encode($cookie_value), time() + (10 * 365 * 24 * 60 * 60), "/");
 }
 
 function flask_auth() {

@@ -50,7 +50,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
             },
         });
 
-        $.post('http://127.0.0.1:8080/wp-admin/admin-ajax.php', data, (res) => {
+        const ajax_url = document.location.origin.concat('/wp-admin/admin-ajax.php');
+        console.log(ajax_url);
+        $.post(ajax_url, data, (res) => {
             console.log(res);
             if (res.success) {
                 document.location.reload();
