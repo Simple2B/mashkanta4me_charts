@@ -1,0 +1,26 @@
+.formContainer {
+    position: relative;
+}
+
+#err-email,
+#err-pass {
+    position: absolute;
+    width: 100%;
+    font-size: 14px;
+    bottom: -40px;
+    left: 0;
+    color: red;
+    margin-bottom: 15px;
+}
+
+#err-pass a {
+    position: absolute;
+    font-size: 13px;
+    bottom: -48px;
+    right: 0;
+    margin-bottom: 15px;
+}
+
+.btnContainer {
+    margin-top: 65px;
+}

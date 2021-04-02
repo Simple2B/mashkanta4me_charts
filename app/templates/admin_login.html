@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,21 +15,23 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
 </head>
+
 <body>
-<div class="jumbotron m-5">
-  <h1 class="display-4">Update data</h1>
-  <div class="container">
-  <form action="update_data" method="post">
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" name="password" class="form-control" id="password" placeholder="Password">
-        <small id="passwordHelp" class="text-danger fade-in-error">
+    <div class="jumbotron m-5">
+        <h1 class="display-4">Update data</h1>
+        <div class="container">
+            <form action="update_data" method="post">
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Password">
+                    <small id="passwordHelp" class="text-danger fade-in-error">
             {{password_error_message}}
           </small>
-      </div>
-      <button type="submit" class="btn btn-primary">Update Now</button>
-    </form>
-  </div>
-</div>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Now</button>
+            </form>
+        </div>
+    </div>
 </body>
+
 </html>

@@ -1,19 +1,49 @@
-var wpAuthModal = new bootstrap.Modal(document.getElementById('auth-modal'));
+//const wpAuthModal = new bootstrap.Modal(document.getElementById('auth-modal'));
 
-const closeButtons = document.querySelectorAll('.close-modal');
-for (let i = 0, n = closeButtons.length; i < n; i++) {
-    closeButtons[i].addEventListener('click', (evt) => {
-        wpAuthModal.hide();
+
+document.addEventListener("DOMContentLoaded", function(event) {
+    //const wpAuthModal = new bootstrap.Modal(document.getElementById('auth-modal'));
+    const wpAuthModal = document.getElementById('authModal');
+    console.log(wpAuthModal)
+
+    const openButton = document.getElementById('openModal');
+    openButton.addEventListener('click', (evt) => {
+        wpAuthModal.style.display = 'block';
     });
-}
 
-const openButtons = document.querySelectorAll('.open-modal');
-for (let i = 0, n = openButtons.length; i < n; i++) {
-    openButtons[i].addEventListener('click', (evt) => {
-        wpAuthModal.show();
-
+    const closeButton = document.getElementById('closeModal');
+    closeButton.addEventListener('click', (evt) => {
+        wpAuthModal.style.display = 'none';
     });
-}
+
+    const openLogin = document.getElementById('pro-content-login');
+    const authorizationModal = document.getElementById('authorizationModal');
+    openLogin.addEventListener('click', (evt) => {
+        wpAuthModal.style.display = 'none';
+        authorizationModal.style.display = 'block';
+    });
+
+    const closeModalPopup = document.getElementById('closeModalPopup');
+    closeModalPopup.addEventListener('click', (evt) => {
+        authorizationModal.style.display = 'none';
+    });
+});
+
+
+// const closeButtons = document.querySelectorAll('.close-modal');
+// for (let i = 0, n = closeButtons.length; i < n; i++) {
+//     closeButtons[i].addEventListener('click', (evt) => {
+//         wpAuthModal.hide();
+//     });
+// }
+
+// const openButtons = document.querySelectorAll('.open-modal');
+// for (let i = 0, n = openButtons.length; i < n; i++) {
+//     openButtons[i].addEventListener('click', (evt) => {
+//         wpAuthModal.show();
+
+//     });
+// }
 
 const filterButtons = document.querySelectorAll('.filter-button');
 for (let i = 0, n = filterButtons.length; i < n; i++) {
