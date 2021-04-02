@@ -25,4 +25,5 @@ pytest
 Flask-SQLAlchemy
 Flask-Login
 mysqlclient
+Flask-CORS
 xlrd==1.2.0

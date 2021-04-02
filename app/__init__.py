@@ -15,6 +15,7 @@ from app.views import (
     bp_api,
     bp_index,
 )
+from flask_cors import CORS
 
 # instantiate extensions
 login_manager = LoginManager()
@@ -22,13 +23,14 @@ login_manager = LoginManager()
 
 class AppWithRoot(Flask):
     def __call__(self, environ, start_response):
-        environ['SCRIPT_NAME'] = os.environ.get('APP_ROOT', '')
+        #environ['SCRIPT_NAME'] = os.environ.get('APP_ROOT', '')
         return super().__call__(environ, start_response)
 
 
 def create_app(environment='development'):
     # Instantiate app.
     app = AppWithRoot(__name__)
+    CORS(app)
 
     # Set app config.
     env = os.environ.get('FLASK_ENV', environment)

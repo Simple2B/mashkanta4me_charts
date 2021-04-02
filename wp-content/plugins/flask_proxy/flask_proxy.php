@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Flask Proxy auth
  * Description: Multiserver authentification with Flask and Wordpress
- * Version: 0.1
+ * Version: 0.2
  * Author: Simple2b
  *
  */
@@ -75,7 +75,19 @@ function write_flask_key($user_login, $user) {
     setcookie('wp_auth', json_encode($cookie_value), time() + (10 * 365 * 24 * 60 * 60));
 }
 
+function flask_auth() {
+    echo "flask";
+    wp_die();
+}
+
 add_action('wp_login', 'write_flask_key', 10, 2);
-add_action('wp_ajax_register_user_front_end', 'register_user_front_end', 0);
-add_action('wp_ajax_nopriv_register_user_front_end', 'register_user_front_end');
+add_action('wp_ajax_flask_auth', 'flask_auth', 0);
+add_action('wp_ajax_nopriv_flask_auth', 'flask_auth');
+
+add_filter('allowed_http_origins', 'add_allowed_origins');
+
+function add_allowed_origins($origins) {
+    $origins[] = '*';
+    return $origins;
+}
 ?>
