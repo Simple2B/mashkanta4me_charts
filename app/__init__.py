@@ -78,6 +78,10 @@ def create_app(environment='development'):
     @login_manager.user_loader
     def get_user(id):
         user = User.query.get(int(id))
+        if user is None:
+            user = User(id=int(id), role='registered')
+            user.save()
+
         new_role = get_new_role()
         if new_role is not None:
             user.role = new_role

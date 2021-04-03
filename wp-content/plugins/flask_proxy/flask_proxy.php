@@ -55,10 +55,11 @@ function write_flask_key($user_login, $user) {
         $wpdb->delete($keys_table, ["wp_user_id" => $user->ID]);
     }
 
-    $paid_roles = ['admin'];
+    $paid_roles = ['administrator'];
     $flask_role = "registered";
 
     // TODO: add check for active subscriber flag (woocommerce subscribers plugin)
+    mash_log(implode(', ', $paid_roles));
     if( array_intersect($paid_roles, $user->roles ) ){
         $flask_role = "paid";
     }
