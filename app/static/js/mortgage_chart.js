@@ -1,5 +1,5 @@
 class MortgageChart {
-  constructor (chartConfig){
+  constructor (chartConfig, wrapper){
     const canvas = document.createElement('canvas');
     canvas.setAttribute('dir', 'rtl');
     canvas.setAttribute('id', 'mortgageChart');
@@ -15,7 +15,7 @@ class MortgageChart {
     container.setAttribute('dir', 'rtl');
     container.style.textAlign = 'right';
 
-    document.body.appendChild(container);
+    wrapper.appendChild(container);
     container.appendChild(canvas);
 
     this.chart = new Chart(canvas.getContext('2d'), chartConfig);

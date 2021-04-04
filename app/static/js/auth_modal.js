@@ -1,10 +1,7 @@
-//const wpAuthModal = new bootstrap.Modal(document.getElementById('auth-modal'));
-
+let wpAuthModal;
 
 document.addEventListener("DOMContentLoaded", function(event) {
-    //const wpAuthModal = new bootstrap.Modal(document.getElementById('auth-modal'));
-    const wpAuthModal = document.getElementById('authModal');
-    console.log(wpAuthModal)
+    wpAuthModal = document.getElementById('authModal');
 
     const openButton = document.getElementById('openModal');
     openButton.addEventListener('click', (evt) => {

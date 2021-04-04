@@ -2,22 +2,30 @@
 
 {% block title %}Historical{% endblock %}
 
+{% block css %}
+{{super()}}
+<link href="{{url_for('static', filename='styles/historical.css')}}" rel="stylesheet">
+{% endblock %}
 {% block body %}
-<div class="filter-wrapper"></div>
-{% include 'filters/historical.html' %}
+<div class="historical-wrapper">
+    {% include 'filters/historical.html' %}
+    <div class="chart-container"></div>
+<div class="reload-btn-wrapper"></div>
+</div>
 {{ super() }}
 {% endblock %}
 
 {% block js %}
-
+<script src="{{ url_for('static', filename='js/historical_add_global.js') }}"></script>
 <script src="{{ url_for('static', filename='js/historical_chart_config.js') }}"></script>
-<script src="{{ url_for('static', filename='js/historical_global_data.js') }}"></script>
 
 {% if role == 'unregistered' %}
 <script src="{{ url_for('static', filename='js/historical_inactive_filter.js') }}"></script>
+<script src="{{ url_for('static', filename='js/historical_reset_btn_disabled.js') }}"></script>
 {% else %}
 <script src="{{ url_for('static', filename='js/historical_active_filter.js') }}"></script>
 <script src="{{ url_for('static', filename='js/historical_registered_utils.js') }}"></script>
+<script src="{{ url_for('static', filename='js/historical_reset_btn.js') }}"></script>
 {% endif %}
 
 {{ load_scripts(['custom_chartjs_functions', 'mortgage_chart', 'historical_dashboard', 'historical']) }}
