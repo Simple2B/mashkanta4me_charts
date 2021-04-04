@@ -14,7 +14,7 @@ function createFilterBtn(label, i){
 }
 
 function canvasClickEvent(){
-  wpAuthModal.show();
+  wpAuthModal.style.display = 'block';
 }
 
 const filterArea = document.querySelector(".filter-area");

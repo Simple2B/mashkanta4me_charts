@@ -1,7 +1,5 @@
 function createFilterBtn(label, i) {
     const li = document.createElement('li');
-    li.classList.add('d-inline-block', 'mb-1');
-
     const span = document.createElement('span');
     span.classList.add('badge', 'badge-secondary', 'chip', 'ml-1');
     span.innerText = label;
@@ -10,18 +8,18 @@ function createFilterBtn(label, i) {
     span.selected = true;
 
     span.addEventListener('click', (evt) => {
-        yearsChips[currentInterest].chip[label] = !yearsChips[currentInterest].chip[label]
+        dashboards.historical.yearsChips[dashboards.historical.currentInterest].chip[label] = !dashboards.historical.yearsChips[dashboards.historical.currentInterest].chip[label]
         span.classList.toggle('chip-selected');
         span.selected = !span.selected;
 
-        const dataCopy = Object.assign({}, currDataset[i]);
-        chart.data.datasets[i] = dataCopy;
+        const dataCopy = Object.assign({}, dashboards.historical.currDataset[i]);
+        dashboards.historical.chart.data.datasets[i] = dataCopy;
 
         if (!span.selected) {
-            chart.data.datasets[i].data = [];
+            dashboards.historical.chart.data.datasets[i].data = [];
         }
 
-        chart.update();
+        dashboards.historical.chart.update();
     })
 
     li.appendChild(span);

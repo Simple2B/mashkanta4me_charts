@@ -8,7 +8,7 @@ const mortgageRanges = {
   'yMax': -Infinity,
 };
 
-var chartConfig = {
+dashboards.historical.chartConfig = {
   type: 'line',
   data: {datasets: []},
   options: {

@@ -1,4 +1,4 @@
-{% extends "home.html" %}
+{% extends "dashboard.html" %}
 
 {% block head %}
 <!-- moment.js -->
@@ -10,9 +10,6 @@
 
 {% block body %}
 {{ super() }}
-<!-- filter data form -->
-{% include 'filters/reload.html' %}
-
 {% block js %}{% endblock %}
 
 {% endblock %}

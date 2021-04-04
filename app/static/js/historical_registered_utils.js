@@ -6,7 +6,7 @@ function mortgageHistoricalTooltip(tooltipItem, data) {
     return label;
 }
 
-chartConfig.options.tooltips = {
+dashboards.historical.chartConfig.options.tooltips = {
     callbacks: {
         label: mortgageHistoricalTooltip,
     }
