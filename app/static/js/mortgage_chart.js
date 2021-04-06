@@ -8,6 +8,7 @@ class MortgageChart {
 
     canvas.addEventListener('click', (evt) => {
       canvasClickEvent();
+      console.log('yes');
     });
 
     const container = document.createElement('div');

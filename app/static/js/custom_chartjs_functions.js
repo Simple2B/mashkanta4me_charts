@@ -57,7 +57,7 @@ var mortgageExpectationLineTooltip = (tooltipItem, data) => {
 }
 
 
-function calculateChartRanges() {
+function calculateChartRanges(dataSet) {
     var mortgageRanges = {
         'xMin': Infinity,
         'xMax': -Infinity,

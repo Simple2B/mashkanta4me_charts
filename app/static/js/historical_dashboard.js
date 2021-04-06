@@ -16,6 +16,7 @@ class HistoricalDashboard {
     }
 
     const wrapper = document.querySelector('.historical-wrapper');
+    console.log(dashboards.historical.chartConfig);
     this.mortgageChart = new MortgageChart(dashboards.historical.chartConfig, wrapper);
     dashboards.historical.chart = this.mortgageChart.chart;
 
