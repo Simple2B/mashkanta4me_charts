@@ -1,16 +1,23 @@
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
-from app.controllers import json_api, filter_loader
+from app.controllers import json_handler, filter_loader
 
 bp_api = Blueprint('api', __name__)
+
 
 def json_error(err_str):
     return jsonify(error=True, err_str=err_str)
 
+
 @bp_api.route('/historical', methods=['GET'])
-@json_api
 def historical():
-    return 'historical'
+    return jsonify(json_handler.get('historical'))
+
+
+@bp_api.route('/analytics', methods=['GET'])
+def analytics():
+    return jsonify(json_handler.get('analytics'))
+
 
 @bp_api.route('/get/filter', methods=['POST'])
 def filter_repository():

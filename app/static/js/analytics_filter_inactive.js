@@ -18,5 +18,12 @@ canvasClickEvent = () => {
 }
 
 const filterArea = document.querySelector(".filter-area");
+
 filterArea.style.backgroundColor = "rgb(170, 170, 170, .4)";
 filterArea.style.color = "rgb(180, 180, 180, .8)";
+
+document.addEventListener('DOMContentLoaded', (e) => {
+  Object.values(dashboards.analytics.sliders.HTML).forEach((slider) => {
+    slider.setAttribute('disabled', true);
+  });
+});

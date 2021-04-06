@@ -1,0 +1,35 @@
+{% extends "dashboard_with_date.html" %}
+
+{% block title %}Historical{% endblock %}
+
+{% block css %}
+{{super()}}
+<link href="{{url_for('static', filename='styles/analytics.css')}}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<div class="analytics-wrapper">
+    {% include 'filters/analytics.html' %}
+    <div class="chart-container"></div>
+<div class="reload-btn-wrapper"></div>
+</div>
+{{ super() }}
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/analytics_add_global.js') }}"></script>
+<script src="{{ url_for('static', filename='js/analytics_chart_config.js') }}"></script>
+
+{% if role == 'unregistered' %}
+<script src="{{ url_for('static', filename='js/analytics_filter_inactive.js') }}"></script>
+<script src="{{ url_for('static', filename='js/analytics_reset_btn_disabled.js') }}"></script>
+{% else %}
+<script src="{{ url_for('static', filename='js/analytics_filter_active.js') }}"></script>
+<script src="{{ url_for('static', filename='js/analytics_reset_btn.js') }}"></script>
+{% endif %}
+
+{{ load_scripts(['custom_chartjs_functions', 'mortgage_chart', 'analytics_dashboard', 'analytics']) }}
+
+
+
+{% endblock %}

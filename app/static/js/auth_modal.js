@@ -3,11 +3,6 @@ let wpAuthModal;
 document.addEventListener("DOMContentLoaded", function(event) {
     wpAuthModal = document.getElementById('authModal');
 
-    const openButton = document.getElementById('openModal');
-    openButton.addEventListener('click', (evt) => {
-        wpAuthModal.style.display = 'block';
-    });
-
     const closeButton = document.getElementById('closeModal');
     closeButton.addEventListener('click', (evt) => {
         wpAuthModal.style.display = 'none';
@@ -37,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
           pass: pass,
           remember: remember,
       };
-console.log(data);
+
       $.ajaxSetup({
           crossDomain: true,
           xhrFields: {
@@ -85,3 +80,10 @@ const greyOn = document.querySelectorAll('.grey-on-disabled');
 for (let i = 0, n = greyOn.length; i < n; i++) {
     greyOn[i].style.color = 'grey';
 };
+
+const allFilters = document.querySelectorAll('.open-modal');
+allFilters.forEach((filter) => {
+  filter.addEventListener('click', (e) => {
+    authorizationModal.style.display = 'block';
+  });
+});

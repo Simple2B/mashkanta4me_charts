@@ -1,34 +1,29 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.css"
-    integrity="sha256-6pa9Ln4B/FyHlxOYaXuwpET9xH0e21iX0SPLg9P5Ro0=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.0.2/nouislider.min.js"
-    integrity="sha256-VG+4f1Hm2q4e+DTEOaiZKlWjJm5W4yqnXNvKkWBYA20=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/wnumb/1.1.0/wNumb.min.js"
-    integrity="sha256-HT7c4lBipI1Hkl/uvUrU1HQx4WF3oQnSafPjgR9Cn8A=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/nouislider.min.css') }}" />
+<script src="{{ url_for('static', filename='js/lib/nouislider.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lib/wNumb.min.js') }}"></script>
 
-
-<div class="container text-right">
+<div class="container text-right open-modal">
     <div class="row filter-area">
         <div class="col-12 col-lg-3 filter-block filter-block-analytics">
             <p>תצוגה לפי</p>
 
             <ul class="type-select type-select-col">
                 <li>
-                    <input type="radio" id="dataSetChangeMonthlyOriginal" name="mortgageSwitchChart"
-                        onclick="mortgageSwitchChart(this);" checked>
+                    <input type="radio" class="analytics-switch-chip" id="dataSetChangeMonthlyOriginal" name="mortgageSwitchChart" checked disabled>
                     <div class="check"></div>
                     <label for="dataSetChangeMonthlyOriginal">זינוק מקסימלי חזוי בהחזר החודשי</label>
                 </li>
+
                 <li>
-                    <input type="radio" id="dataSetLoanCostOriginal" name="mortgageSwitchChart"
-                        onclick="mortgageSwitchChart(this);">
+                    <input type="radio" class="analytics-switch-chip" id="dataSetLoanCostOriginal" name="mortgageSwitchChart" disabled>
                     <div class="check">
                         <div class="inside"></div>
                     </div>
                     <label for="dataSetLoanCostOriginal">עלות המשכנתה לשקל</label>
                 </li>
+
                 <li>
-                    <input type="radio" id="dataSetPrincipalHalvedOriginal" name="mortgageSwitchChart"
-                        onclick="mortgageSwitchChart(this);">
+                    <input type="radio" class="analytics-switch-chip" id="dataSetPrincipalHalvedOriginal" name="mortgageSwitchChart" disabled>
                     <div class="check">
                         <div class="inside"></div>
                     </div>
@@ -43,23 +38,8 @@
         </div>
         <div class="col-12 col-lg-3 filter-block filter-block-analytics">
             <p id="danger-level-header">רמת סיכון</p>
-            <ul class="p-0 mb-0">
-                <li class="d-inline-block mb-1">
-                    <span id="1" class="badge badge-secondary chip ml-1">עד 10%</span>
-                </li>
-                <li class="d-inline-block mb-1">
-                    <span id="2" class="badge badge-secondary chip ml-1">עד 20%</span>
-                </li>
-                <li class="d-inline-block mb-1">
-                    <span id="3" class="badge badge-secondary chip ml-1">עד 30%</span>
-                </li>
-                <li class="d-inline-block mb-1">
-                    <span id="4" class="badge badge-secondary chip ml-1">עד 40%</span>
-                </li>
-                <li class="d-inline-block mb-1">
-                    <span id="5" class="badge badge-secondary chip">מעל 40%</span>
-                </li>
-            </ul>
+            <div class="filter-button-container"></div>
+
         </div>
         <div class="col-12 col-lg-3 filter-block filter-block-analytics">
             <p>החזר חודשי</p>

@@ -1,38 +1,29 @@
 // init mortgage amount slider
 var sliderMortgageAmount = document.getElementById('sliderMortgageAmount');
 noUiSlider.create(sliderMortgageAmount, {
-    // start: [200000, 1800000],
     start: [Math.floor(mortgageRanges.xMin / 200000) * 200000, Math.ceil(mortgageRanges.xMax / 200000) * 200000],
     tooltips: [true, true],
     tooltips: [wNumb({ decimals: 0, thousand: ',' }), wNumb({ decimals: 0, thousand: ',' })],
     connect: true,
     direction: 'ltr',
     step: 50000,
-    // range: {
-    //     'min': [200000],
-    //     'max': [1800000]
-    // },
+
     range: {
         'min': [Math.floor(mortgageRanges.xMin / 200000) * 200000],
         'max': [Math.ceil(mortgageRanges.xMax / 200000) * 200000]
     },
-
 });
 
 // init monthly return slider
 var sliderMonthlyReturn = document.getElementById('sliderMonthlyReturn');
 noUiSlider.create(sliderMonthlyReturn, {
-    // start: [1000, 10000],
     start: [Math.floor(mortgageRanges.yMin / 1000) * 1000, Math.ceil(mortgageRanges.yMax / 10000) * 10000],
     tooltips: [true, true],
     tooltips: [wNumb({ decimals: 0, thousand: ',' }), wNumb({ decimals: 0, thousand: ',' })],
     connect: true,
     direction: 'ltr',
     step: 500,
-    // range: {
-    //     'min': [1000],
-    //     'max': [10000]
-    // },
+
     range: {
         'min': [Math.floor(mortgageRanges.yMin / 1000) * 1000],
         'max': [Math.ceil(mortgageRanges.yMax / 10000) * 10000]
@@ -116,7 +107,7 @@ function updatePlot(values, handle, unencoded, tap, positions) {
             dangerLevel[elem['danger']] === true)
         mortgageChart.data.datasets[i].label = dataSetOriginalLabels[i]
     }
-    
+
 
     mortgageChart.update();
 
