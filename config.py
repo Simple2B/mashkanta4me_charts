@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from pathlib import Path
 
 
 base_dir = Path('.').resolve()
@@ -12,6 +11,7 @@ load_dotenv(dotenv_path=env_path)
 class BaseConfig(object):
     """Base configuration."""
     APP_NAME = 'Mashkanta flask app'
+    APP_ROOT = os.environ.get('APP_ROOT', "")
     DEBUG_TB_ENABLED = False
     SECRET_KEY = os.environ.get('SECRET_KEY', 'Ensure you set a secret key, this is important!')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
