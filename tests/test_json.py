@@ -34,6 +34,7 @@ def client():
         yield client
         app_ctx.pop()
 
+
 def test_json_files(client):
     from app.controllers import json_handler
 
