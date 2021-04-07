@@ -2,39 +2,39 @@ import os
 import json
 from urllib.parse import unquote
 
-from flask import Flask, abort, request, Response, session
-from flask_login import LoginManager, current_user, login_user
-from werkzeug.exceptions import HTTPException
+from flask import Flask, request
+from flask_login import LoginManager, login_user
 from flask_cors import CORS
 
 from app.models import db, AnonUser, User, WpAuthKey
-from config import config
-from app.views import (
-    bp_interest,
-    bp_analytics,
-    bp_economic_expect,
-    bp_historical,
-    bp_api,
-    bp_index,
-)
+from config import config, BaseConfig as conf
+
 
 # instantiate extensions
 login_manager = LoginManager()
 
 
-class AppWithRoot(Flask):
-    def __call__(self, environ, start_response):
-        environ['SCRIPT_NAME'] = os.environ.get('APP_ROOT', '')
-        return super().__call__(environ, start_response)
+def create_app(environment="development"):
+    from app.views import (
+        bp_interest,
+        bp_analytics,
+        bp_economic_expect,
+        bp_historical,
+        bp_api,
+        bp_index,
+    )
 
-
-def create_app(environment='development'):
     # Instantiate app.
+    class AppWithRoot(Flask):
+        def __call__(self, environ, start_response):
+            environ["SCRIPT_NAME"] = conf.APP_ROOT
+            return super().__call__(environ, start_response)
+
     app = AppWithRoot(__name__)
     CORS(app)
 
     # Set app config.
-    env = os.environ.get('FLASK_ENV', environment)
+    env = os.environ.get("FLASK_ENV", environment)
     app.config.from_object(config[env])
     config[env].configure(app)
 
@@ -52,7 +52,7 @@ def create_app(environment='development'):
 
     # Set up flask login.
     def retrieve_wp_cookies():
-        data = request.cookies.get('wp_auth')
+        data = request.cookies.get("wp_auth")
         if data is None:
             return None
 
@@ -66,21 +66,18 @@ def create_app(environment='development'):
             db.session.commit()
             return auth_key.role
 
-        return None
-
     def get_new_role():
         data = retrieve_wp_cookies()
         if data is None:
             return None
 
-        return get_wp_auth_role(data['key_id'], data['uuid'])
+        return get_wp_auth_role(data["key_id"], data["uuid"])
 
     @login_manager.user_loader
     def get_user(id):
         user = User.query.get(int(id))
-        if user is None:
-            user = User(id=int(id), role='registered')
-            user.save()
+        if not user:
+            user = User(id=int(id), role="registered").save()
 
         new_role = get_new_role()
         if new_role is not None:
@@ -102,7 +99,7 @@ def create_app(environment='development'):
         return user
 
     login_manager.anonymous_user = AnonUser
-    login_manager.login_view = 'auth.login'
-    login_manager.login_message_category = 'info'
+    login_manager.login_view = "auth.login"
+    login_manager.login_message_category = "info"
 
     return app

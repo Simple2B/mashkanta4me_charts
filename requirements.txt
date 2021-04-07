@@ -27,3 +27,6 @@ Flask-Login
 mysqlclient
 Flask-CORS
 xlrd==1.2.0
+
+black
+flake8
