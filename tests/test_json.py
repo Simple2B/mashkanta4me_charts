@@ -26,13 +26,14 @@ JSON_FILES = (
 def client():
     app = create_app(environment="testing")
     app.config["TESTING"] = True
-    app.config['SERVER_NAME'] = 'localhost'
+    app.config['SERVER_NAME'] = 'localhost.localdomain'
 
     with app.test_client() as client:
         app_ctx = app.app_context()
         app_ctx.push()
         yield client
         app_ctx.pop()
+
 
 def test_json_files(client):
     from app.controllers import json_handler
