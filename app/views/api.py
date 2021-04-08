@@ -9,6 +9,11 @@ def json_error(err_str):
     return jsonify(error=True, err_str=err_str)
 
 
+@bp_api.route('/data/<string:dataset_name>')
+def get_dataset(dataset_name):
+    return jsonify({'error': False, 'data': dataset_name})
+
+
 @bp_api.route('/historical', methods=['GET'])
 def historical():
     return jsonify(json_handler.get('historical'))
@@ -17,6 +22,11 @@ def historical():
 @bp_api.route('/analytics', methods=['GET'])
 def analytics():
     return jsonify(json_handler.get('analytics'))
+
+
+@bp_api.route('/prime_index')
+def prime_index():
+    return jsonify(json_handler.get('prime_index'))
 
 
 @bp_api.route('/get/filter', methods=['POST'])

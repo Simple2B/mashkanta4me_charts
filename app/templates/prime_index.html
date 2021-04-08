@@ -1,0 +1,37 @@
+{% extends "dashboard_with_date.html" %}
+
+{% block title %}Prime Index{% endblock %}
+
+{% block css %}
+{{super()}}
+<link href="{{url_for('static', filename='styles/prime_index.css')}}" rel="stylesheet">
+{% endblock %}
+
+
+{% block body %}
+<div class="analytics-wrapper">
+    {#% include 'filters/prime_index.html' %#}
+    <div class="chart-container"></div>
+<div class="reload-btn-wrapper"></div>
+</div>
+{{ super() }}
+{% endblock %}
+
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/lib/nouislider.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lib/wNumb.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/prime_index_add_global.js') }}"></script>
+<script src="{{ url_for('static', filename='js/prime_index_chart_config.js') }}"></script>
+
+{% if role == 'unregistered' %}
+<!--script src="{{ url_for('static', filename='js/prime_index_filter_inactive.js') }}"></script-->
+<!--script src="{{ url_for('static', filename='js/prime_index_reset_btn_disabled.js') }}"></script-->
+{% else %}
+<!--script src="{{ url_for('static', filename='js/prime_index_filter_active.js') }}"></script-->
+<!--script src="{{ url_for('static', filename='js/prime_index_reset_btn.js') }}"></script-->
+{% endif %}
+
+{{ load_scripts(['custom_chartjs_functions', 'mortgage_chart', 'prime_index_dashboard', 'prime_index']) }}
+{% endblock %}
