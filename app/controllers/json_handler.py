@@ -19,7 +19,7 @@ DATASET_MAP_JSON = {
 
 class JsonHandler:
     def __init__(self, dir_name):
-        self.json_dir = Path('./app/static/') / dir_name
+        self.json_dir = Path('./app/models/data') / dir_name
         self.json_dir = self.json_dir.resolve()
 
     def get(self, dataset_name):

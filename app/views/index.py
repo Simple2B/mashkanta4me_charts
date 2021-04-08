@@ -1,7 +1,8 @@
+import bcrypt
 import json
 from flask import Blueprint, render_template, url_for, request, app, redirect
 from flask_login import current_user, logout_user
-
+from backend.task import update_data
 
 bp_index = Blueprint('index', __name__)
 DASHBOARD_ENDPOINTS = (

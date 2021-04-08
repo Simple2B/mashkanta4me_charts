@@ -23,15 +23,17 @@
 </head>
 
 <body dir="rtl">
-    {% block body %}{% endblock %}
-    <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }} "></script>
-    <script src="{{ url_for( 'static', filename='js/cookies_handler.js' ) }} "></script>
+  {% block body %}{% endblock %}
+  <!-- Option 1: Bootstrap Bundle with Popper -->
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }} "></script>
+  <script src="{{ url_for( 'static', filename='js/cookies_handler.js' ) }} "></script>
 
-    {% if role == 'unregistered' %} {% include "auth_modal.html" %}
+  {% if role == 'unregistered' %}
+    {% include "auth_modal.html" %}
+    {% include "login_modal.html" %}
     <script src="{{url_for('static', filename='js/jquery-3.6.0.min.js')}}"></script>
     <script src=" {{ url_for( 'static', filename='js/auth_modal.js' ) }} "></script>
-    {% endif %} {% include "login_modal.html" %}
+  {% endif %}
 </body>
 
 </html>

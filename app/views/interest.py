@@ -1,5 +1,6 @@
 import json
 from flask import Blueprint, render_template
+from flask_login import current_user
 from app.controllers import json_handler
 
 bp_interest = Blueprint('interest', __name__)
@@ -22,7 +23,7 @@ def eligibility():
 
 @bp_interest.route("/prime_index")
 def prime_index():
-    return render_template('home.html', data_set=json_handler.get('prime_index'), filter_form='interest')
+    return render_template('prime_index.html', role=current_user.role)
 
 
 @bp_interest.route("/variable_WO_cpi_index")

@@ -36,7 +36,7 @@ class Api {
   }
 
   _fetch(readyHandler, endpoint, config){
-    fetch('api/'.concat(endpoint), config).then((resp) => {
+    fetch('api/data/'.concat(endpoint), config).then((resp) => {
       return resp.text();
     }).then((data_raw) => {
       const data = JSON.parse(data_raw.replace(/\bNaN\b/g, "null"));
