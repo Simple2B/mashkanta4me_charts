@@ -99,7 +99,7 @@ def create_app(environment="development"):
         return user
 
     login_manager.anonymous_user = AnonUser
-    login_manager.login_view = "auth.login"
+    login_manager.login_view = "index.login"
     login_manager.login_message_category = "info"
 
     return app

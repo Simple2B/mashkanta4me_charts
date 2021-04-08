@@ -1,5 +1,14 @@
-from flask import Blueprint, render_template, url_for, request, redirect
-from flask_login import logout_user
+from flask import (
+    Blueprint,
+    render_template,
+    url_for,
+    request,
+    redirect,
+    Response,
+    abort,
+)
+from flask_login import logout_user, login_required, current_user
+from app.controllers import ChartDataSource
 
 
 bp_index = Blueprint("index", __name__)
@@ -35,24 +44,24 @@ def admin():
 
 
 @bp_index.route("/update_data", methods=["POST", "GET"])
+@login_required
 def update_data_route():
-    import bcrypt
-    password = request.form.get("password").encode("utf-8")
-    # hashed = bcrypt.hashpw(password, bcrypt.gensalt()) # generate hash for Eyal's password
-    if bcrypt.checkpw(
-        password, b"$2b$12$PNi9fGQ0RqrnzzkOtXOOiufg04u.UympdSXYKH3Q7JoTT/dazaLiW"
-    ):
-        # TODO dummy code for avoid flake errors
-        def update_data():
-            pass
-        update_data()
+    if current_user.role == "administrator":
+        data_source = ChartDataSource()
+        data_source.update()
         return render_template("update_data_success.html")
-    else:
-        return redirect(url_for("admin", password_error_message="wrong password"))
+    abort(Response("Access denied"))
 
 
 # TODO remove in future
 @bp_index.route("/logout")
 def logout():
     logout_user()
+    return redirect(url_for("historical.historical"))
+
+
+@bp_index.route("/login")
+def login():
+    if not current_user.is_authenticated:
+        return render_template("login.html", role="unregistered")
     return redirect(url_for("historical.historical"))
