@@ -13,5 +13,5 @@ class User(UserMixin, db.Model, ModelMixin):
     id = db.Column(db.BigInteger(), primary_key=True)
     role = db.Column(db.String(255))
 
-    def __str__(self):
-        return f"id: {self.id}, role: {self.role}"
+    def __repr__(self):
+        return f"<id: {self.id}, role: {self.role}>"
