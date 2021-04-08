@@ -80,7 +80,7 @@ class AnalyticsDashboard {
       buttonList.classList.add('p-0', 'mb-0');
       buttonList.setAttribute('hidden', true);
       const chip = {};
-
+      console.log(dataset);
       dataset.forEach((points, i) => {
         chip[points.label] = true;
         const btn = createFilterBtn(points.label, i);
