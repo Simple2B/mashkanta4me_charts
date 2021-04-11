@@ -1,4 +1,4 @@
-dashboards.prime.chartConfig = {
+const primeChartConfig = {
   type: 'scatter',
   data: {datasets: []},
   options: {
@@ -93,6 +93,7 @@ dashboards.prime.chartConfig = {
   },
 }
 
+/*
 dashboards.prime.sliders = {
   options: {
     tooltips: [wNumb({ decimals: 0, thousand: ',' }), wNumb({ decimals: 0, thousand: ',' })],
@@ -115,5 +116,4 @@ document.addEventListener('DOMContentLoaded', (e) => {
     monthlyReturn: sliderMonthlyReturn,
   }
 });
-
-console.log(dashboards);
+*/

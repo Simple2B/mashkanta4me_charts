@@ -37,15 +37,9 @@ class Api {
 
   _fetch(readyHandler, endpoint, config){
     fetch('api/data/'.concat(endpoint), config).then((resp) => {
-      return resp.text();
-    }).then((data_raw) => {
-      const data = JSON.parse(data_raw.replace(/\bNaN\b/g, "null"));
-      if (data.error){
-        console.log(data.err_str);
-        return;
-      }
-
-      readyHandler(data.data);
-    });
+      return resp.json();
+    }).then((dataset => {
+      readyHandler(dataset);
+    }));
   }
 }
