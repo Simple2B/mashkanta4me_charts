@@ -46,7 +46,8 @@ class ChartDataSource(object):
             log(log.WARNING, "Asked unknown chart_name: [%s]", chart_name)
             return {}
         file_name = DATASET_MAP_JSON[chart_name]
-        with open(pathlib.Path(EXCEL_FILES_DIR) / file_name, "r", encoding="cp862") as file:
+        # ISO 88598
+        with open(pathlib.Path(EXCEL_FILES_DIR) / file_name, "r", encoding="iso8859-8") as file:
             csv_reader = csv.reader(file)
             keys = None
             data = None

@@ -1,6 +1,24 @@
-class PrimeDashboard {
+﻿class PrimeDashboard {
   constructor(data, containerSelector){
+    this.ltvMapper = {
+      '1': 'עד 45%',
+      '2': '45% - 60%',
+      '3': 'מעל 60%',
+    }
+
+    this.sliderOptions = {
+      tooltips: [wNumb({ decimals: 0, thousand: ',' }), wNumb({ decimals: 0, thousand: ',' })],
+      connect: true,
+      direction: 'ltr',
+      start: [0, 1],
+      range: {
+        'min': 0,
+        'max': 1,
+      }
+    }
+
     this.data = data;
+    console.log(this.data);
     const wrapper = document.querySelector(containerSelector);
     this.banks = data.Bank_name.filter(onlyUnique);
     this.setFilter(wrapper);
@@ -97,11 +115,11 @@ class PrimeDashboard {
     [['LTV45', 'עד 45%'], ['LTV45-60', '45% - 60%'], ['LTV60', 'מעל 60%']].forEach((buttonData) => {
       const [spanId, spanText] = buttonData;
       const buttonLI = document.createElement('li');
-      buttonLI.setAttribute('d-inline-block', 'mb-1');
-
+      buttonLI.classList.add('d-inline-block', 'mb-1');
       const span = document.createElement('span');
       span.setAttribute('id', spanId);
       span.classList.add('badge', 'badge-secondary', 'chip', 'ml-1');
+      span.innerHTML = spanText;
 
       buttonLI.appendChild(span);
       loanButtonsUL.appendChild(buttonLI);
@@ -134,6 +152,7 @@ class PrimeDashboard {
       buttonLI.classList.add('d-inline-block', 'mb-1');
       const span = document.createElement('span');
       span.setAttribute('id', bank);
+
       span.classList.add('badge', 'badge-secondary', 'chip', 'ml-1');
       span.innerHTML = bank;
       buttonLI.appendChild(span);
@@ -142,6 +161,11 @@ class PrimeDashboard {
     bankListContainer.appendChild(bankListUL);
     filterArea.appendChild(bankListContainer);
     container.appendChild(filterArea);
+
+    [yearsSlider, sliderInterest].forEach((slider) => {
+      noUiSlider.create(slider, this.sliderOptions);
+    });
+
     wrapper.appendChild(container);
   }
 
