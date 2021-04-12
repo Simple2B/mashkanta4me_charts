@@ -21,10 +21,15 @@ def test_get_prime_data():
         "variable_w",
         "variable_wo",
     ):
-        data = source.chart_data(chart_name)
-        assert data
-        assert "banks" in data
-        assert "dataSet" in data
-        data = data["dataSet"]
-        assert len(data) == 3
-        assert "data" in data[0]
+        for options in [{}, dict(bankView=True)]:
+            data = source.chart_data(chart_name, options)
+            assert data
+            assert "banks" in data
+            assert "dataSet" in data
+            data_set = data["dataSet"]
+            if "bankView" in options:
+                assert "banks" in data
+                assert len(data_set) == len(data["banks"])
+            else:
+                assert len(data_set) == 3
+            assert "data" in data_set[0]
