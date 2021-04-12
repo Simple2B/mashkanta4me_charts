@@ -8,10 +8,14 @@ const primeChartConfig = {
       onClick: function (e) { e.stopPropagation(); }
     },
 
+
+    hover: {
+      mode: 'nearest'
+    },
+
+
     tooltips: {
-      callbacks: {
-        label: () => {},
-      }
+      enabled: false,
     },
 
     animation: { duration: 0 },

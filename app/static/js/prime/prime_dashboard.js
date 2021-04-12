@@ -11,44 +11,45 @@
       tooltips: [wNumb({ decimals: 0, thousand: ',' }), wNumb({ decimals: 0, thousand: ',' })],
       connect: true,
       direction: 'ltr',
-      start: [0, 1],
+      start: [0, 30],
       range: {
         'min': 0,
-        'max': 1,
+        'max': 30,
       },
     }
 
     this.data = data;
     const wrapper = document.querySelector(containerSelector);
-    this.viewByLoan = true;
+
+    if (userData.userRole === 'unregistered'){
+      wrapper.addEventListener('click', (evt) => {
+        wpAuthModal.style.display = 'block';
+      });
+    }
+
+    this.viewByLoan = false;
+
     this.setFilter(wrapper);
+
     primeChartConfig.data.datasets = this.data.dataSet;
+
+    if (userData.userRole !== 'unregistered'){
+      primeChartConfig.options.tooltips = {
+        mode: 'single',
+        callbacks: {
+          label: (tooltipItem, data) => {
+            console.log(data)
+            var monthlyReturn = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].y || '';
+            let mortgageAmount = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].x || '';
+            let label = 'משכנתה בגובה: ' + mortgageAddComma(mortgageAmount) + ' ש״ח, תשלום חודשי ראשוני: ' + monthlyReturn + ' ש״ח';
+            return label;
+          },
+        }
+      }
+    }
+
     this.chart = new MortgageChart(primeChartConfig, wrapper);
-
     this.update();
-    //dashboards.prime.das  hboard = this;
-    //dashboards.prime.currDataset = dashboards.analytics.data.change_monthly;
-    //dashboards.prime.currentInterest = 'change_monthly';
-
-    //const wrapper = document.querySelector('.prime-wrapper');
-    //this.mortgageChart = new MortgageChart(dashboards.prime.chartConfig, wrapper);
-    //dashboards.prime.chart = this.mortgageChart.chart;
-
-    //this.initSliders();
-    //this.updateSliders();
-    //this.initForecastsChips();
-
-    // dashboards.prime.forecastsChips[dashboards.analytics.currentInterest].filter.removeAttribute('hidden');
-    //dashboards.prime.updateChart = this.updateChart;
-    //this.updateChart();
-
-    //dashboards.prime.sliders.HTML.mortgageAmount.noUiSlider.on('update', sliderMoveHandler);
-    //dashboards.prime.sliders.HTML.monthlyReturn.noUiSlider.on('update', sliderMoveHandler);
-    //function sliderMoveHandler(values, handle, unencoded, tap, positions, noUiSlider){
-    //  dashboards.prime.updateChart();
-    //}
-
-    //dashboards.prime.changeChip = this.changeChip;
   }
 
   update(){
@@ -82,17 +83,21 @@
     }
 
     this.api.getFetch((data) => {
-      console.log(data);
       this.chart.chart.data.datasets = data.dataSet;
+      // dashboard charts ranges
+      // x range
+      this.chart.chart.options.scales.xAxes[0].ticks.suggestedMin = data.minX;
+      this.chart.chart.options.scales.xAxes[0].ticks.suggestedMax = data.maxX;
+      // y range
+      this.chart.chart.options.scales.yAxes[0].ticks.suggestedMin = data.minY;
+      this.chart.chart.options.scales.yAxes[0].ticks.suggestedMax = data.maxY;
+
       this.yearsSlider.noUiSlider.updateOptions({
-        range: {'min': data.minY, 'max': data.maxY},
-      });
-      this.sliderInterest.noUiSlider.updateOptions({
         range: {'min': data.minX, 'max': data.maxX},
       });
-
-      this.yearsSlider.noUiSlider.set([data.minY, data.maxY]);
-      this.sliderInterest.noUiSlider.set([data.minX, data.maxX]);
+      this.sliderInterest.noUiSlider.updateOptions({
+        range: {'min': data.minY, 'max': data.maxY},
+      });
 
       this.chart.chart.update();
     }, query);
@@ -104,6 +109,12 @@
     container.classList.add('container', 'text-right');
     const filterArea = document.createElement('div');
     filterArea.classList.add('row', 'filter-area');
+
+    if (userData.userRole === 'unregistered'){
+      filterArea.addEventListener('click', (evt) => {
+        wpAuthModal.style.display = 'block';
+      });
+    }
 
     // view by column
     const viewByColumn = document.createElement('div');
@@ -118,16 +129,8 @@
       const [inputId, labelText] = radioData;
       const inputHTML = document.createElement('input');
       inputHTML.setAttribute('type', 'radio');
+      inputHTML.setAttribute('id', inputId);
 
-      if (userData.userRole == 'unregistered'){
-        inputHTML.setAttribute('disabled', true);
-      } else {
-        inputHTML.addEventListener('change', (evt) => {
-          this.viewByLoan = !this.viewByLoan;
-          this.update();
-        });
-
-      }
 
       inputHTML.setAttribute('id', inputId);
       inputHTML.setAttribute('name', 'mortgageSwitchChart');
@@ -144,6 +147,18 @@
       listElement.appendChild(inputHTML);
       listElement.appendChild(checkDiv);
       listElement.appendChild(label);
+
+
+      if (userData.userRole === 'unregistered'){
+        inputHTML.setAttribute('disabled', true);
+        inputHTML.disabled = true;
+        checkDiv.classList.add('disabled-radio');
+      } else {
+        inputHTML.addEventListener('change', (evt) => {
+          this.viewByLoan = !this.viewByLoan;
+          this.update();
+        });
+      }
 
       viewByRadioUL.appendChild(listElement);
     });
@@ -183,8 +198,10 @@
       span.setAttribute('id', spanId);
       span.classList.add('badge', 'badge-secondary', 'chip', 'ml-1', 'chip-selected');
 
-      if (userData.userRole == 'unregistered'){
+      if (userData.userRole === 'unregistered'){
         span.setAttribute('disabled', true);
+        span.classList.remove('chip-selected');
+        span.classList.add('disabled');
       } else {
         span.addEventListener('click', (evt) => {
           this.ltvStatus[spanId] = !this.ltvStatus[spanId];
@@ -222,7 +239,7 @@
     bankListHeader.innerHTML = 'הבנק';
     const bankListUL = document.createElement('ul');
     bankListUL.classList.add('p-0', 'mb-0');
-    console.log(this);
+
     this.bankStatus = {};
     this.data.banks.forEach((bank) => {
       const buttonLI = document.createElement('li');
@@ -230,8 +247,21 @@
       const span = document.createElement('span');
       span.setAttribute('id', bank);
 
-      span.classList.add('badge', 'badge-secondary', 'chip', 'ml-1');
+      span.classList.add('badge', 'badge-secondary', 'chip', 'ml-1', 'chip-selected');
       span.innerHTML = bank;
+
+      if (userData.userRole === 'unregistered'){
+        span.setAttribute('disabled', true);
+        span.classList.remove('chip-selected');
+        buttonLI.classList.add('disabled');
+      } else {
+        span.addEventListener('click', (evt) => {
+          this.bankStatus[bank] = !this.bankStatus[bank];
+          span.classList.toggle('chip-selected');
+          this.update();
+        });
+      }
+
       buttonLI.appendChild(span);
       bankListUL.appendChild(buttonLI);
       this.bankStatus[bank] = true;
@@ -244,7 +274,50 @@
       noUiSlider.create(slider, this.sliderOptions);
     });
 
+    [this.yearsSlider, this.sliderInterest].forEach((slider) => {
+      if (userData.userRole === 'unregistered'){
+        slider.setAttribute('disabled', true);
+        slider.disabled = true;
+        slider.noUiSlider.disabled = true;
+      } else {
+        slider.noUiSlider.on('end', (values, handle, unencoded, tap, positions, noUiSlider) => {
+          this.update();
+        });
+      }
+    });
+
     wrapper.appendChild(container);
+    const resetButton = createResetBtn();
+    const resetBtnHTML = resetButton.querySelector('.reload-page-btn');
+
+    if(userData.userRole === 'unregistered'){
+      resetBtnHTML.classList.add('disabled-button');
+      resetBtnHTML.addEventListener('click', (evt) => {
+        wpAuthModal.style.display = 'block';
+      })
+    } else {
+      resetBtnHTML.addEventListener('click', (evt) => {
+        this.yearsSlider.noUiSlider.set([this.data.minX, this.data.maxX]);
+        this.sliderInterest.noUiSlider.set([this.data.minY, this.data.maxY]);
+        Object.keys(this.bankStatus).map((bank) => {
+          this.bankStatus[bank] = true;
+        });
+
+        Object.keys(this.ltvStatus).map((ltv) => {
+          this.ltvStatus[ltv] = true;
+        });
+
+        const filterButtons = document.querySelectorAll('.chip');
+        filterButtons.forEach((btn) => {
+          btn.classList.add('chip-selected')
+        });
+
+        this.update();
+      });
+    }
+
+    wrapper.appendChild(resetButton);
+    document.getElementById('selectedLTV').setAttribute('checked', true);
   }
 
   changeChip(chip){

@@ -9,6 +9,7 @@ dashboards.analytics.chartConfig = {
     },
 
     tooltips: {
+      mode: 'label',
       callbacks: {
         label: () => {},
       }
