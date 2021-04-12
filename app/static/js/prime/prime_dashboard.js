@@ -20,8 +20,8 @@
     this.data = data;
     console.log(this.data);
     const wrapper = document.querySelector(containerSelector);
-    this.banks = data.Bank_name.filter(onlyUnique);
-    this.setFilter(wrapper);
+    // this.banks = data.Bank_name.filter(onlyUnique);
+    // this.setFilter(wrapper);
     this.chart = new MortgageChart(primeChartConfig, wrapper);
 
     //dashboards.prime.dashboard = this;
