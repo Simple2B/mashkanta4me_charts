@@ -91,8 +91,8 @@ class ChartDataSource(object):
     def charts(self):
         return DATASET_MAP_JSON.keys()
 
-    def _basic_chart_data(self, file_path: str):
-        with open(file_path, "r", encoding="iso8859-8") as file:
+    def _basic_chart_data(self, file_path: str, encoding: str = "iso8859-8"):
+        with open(file_path, "r", encoding=encoding) as file:
             csv_reader = csv.reader(file)
             keys = None
             data = None
@@ -110,7 +110,12 @@ class ChartDataSource(object):
             log(log.WARNING, "Asked unknown chart_name: [%s]", chart_name)
             return {}
         file_name = DATASET_MAP_JSON[chart_name]
-        data = self._basic_chart_data(pathlib.Path(EXCEL_FILES_DIR) / file_name)
+        try:
+            data = self._basic_chart_data(pathlib.Path(EXCEL_FILES_DIR) / file_name)
+        except UnicodeDecodeError:
+            data = self._basic_chart_data(
+                pathlib.Path(EXCEL_FILES_DIR) / file_name, encoding="utf-8"
+            )
         if chart_name in DATA_PROCESSOR:
             return DATA_PROCESSOR[chart_name](data)
 
