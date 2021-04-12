@@ -15,7 +15,7 @@
       range: {
         'min': 0,
         'max': 1,
-      }
+      },
     }
 
     this.data = data;
@@ -83,9 +83,20 @@
 
     this.api.getFetch((data) => {
       console.log(data);
+      this.chart.chart.data.datasets = data.dataSet;
+      this.yearsSlider.noUiSlider.updateOptions({
+        range: {'min': data.minY, 'max': data.maxY},
+      });
+      this.sliderInterest.noUiSlider.updateOptions({
+        range: {'min': data.minX, 'max': data.maxX},
+      });
+
+      this.yearsSlider.noUiSlider.set([data.minY, data.maxY]);
+      this.sliderInterest.noUiSlider.set([data.minX, data.maxX]);
+
+      this.chart.chart.update();
     }, query);
 
-    this.chart.chart.update();
   }
 
   setFilter(wrapper){
@@ -178,7 +189,6 @@
         span.addEventListener('click', (evt) => {
           this.ltvStatus[spanId] = !this.ltvStatus[spanId];
           span.classList.toggle('chip-selected');
-          console.log('click')
           this.update();
         });
       }
