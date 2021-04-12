@@ -13,10 +13,18 @@ def test_get_data():
 
 def test_get_prime_data():
     source = ChartDataSource()
-    data = source.chart_data("prime")
-    assert data
-    assert "banks" in data
-    assert "dataSet" in data
-    data = data["dataSet"]
-    assert len(data) == 3
-    assert "data" in data[0]
+    for chart_name in (
+        "prime",
+        "const_w",
+        "const_w",
+        "eligibility",
+        "variable_w",
+        "variable_wo",
+    ):
+        data = source.chart_data(chart_name)
+        assert data
+        assert "banks" in data
+        assert "dataSet" in data
+        data = data["dataSet"]
+        assert len(data) == 3
+        assert "data" in data[0]

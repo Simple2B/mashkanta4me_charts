@@ -29,11 +29,17 @@ DATA_PROCESSOR = {}
 def data_processor(name: str):
     def decorator(func):
         DATA_PROCESSOR[name] = func
+        return func
 
     return decorator
 
 
 @data_processor("prime")
+@data_processor("const_w")
+@data_processor("const_wo")
+@data_processor("eligibility")
+@data_processor("variable_w")
+@data_processor("variable_wo")
 def get_prime_data(file_data: dict):
     def get_lvt_data(lvt_level):
         data_size = len(file_data["LTV"])
