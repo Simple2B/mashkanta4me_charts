@@ -20,10 +20,10 @@
 
     this.data = data;
     const wrapper = document.querySelector(containerSelector);
+    this.viewByLoan = true;
     this.setFilter(wrapper);
     primeChartConfig.data.datasets = this.data.dataSet;
     this.chart = new MortgageChart(primeChartConfig, wrapper);
-    this.viewByLoan = true;
 
     this.update();
     //dashboards.prime.das  hboard = this;
@@ -107,6 +107,17 @@
       const [inputId, labelText] = radioData;
       const inputHTML = document.createElement('input');
       inputHTML.setAttribute('type', 'radio');
+
+      if (userData.userRole == 'unregistered'){
+        inputHTML.setAttribute('disabled', true);
+      } else {
+        inputHTML.addEventListener('change', (evt) => {
+          this.viewByLoan = !this.viewByLoan;
+          this.update();
+        });
+
+      }
+
       inputHTML.setAttribute('id', inputId);
       inputHTML.setAttribute('name', 'mortgageSwitchChart');
 
@@ -136,6 +147,7 @@
     yearsSliderHeader.innerHTML = 'משך השנים';
     this.yearsSlider = document.createElement('div');
     this.yearsSlider.setAttribute('id', 'sliderYears');
+
     yearsSliderContainer.appendChild(yearsSliderHeader);
     yearsSliderContainer.appendChild(this.yearsSlider);
     filterArea.appendChild(yearsSliderContainer);
@@ -158,7 +170,19 @@
       buttonLI.classList.add('d-inline-block', 'mb-1');
       const span = document.createElement('span');
       span.setAttribute('id', spanId);
-      span.classList.add('badge', 'badge-secondary', 'chip', 'ml-1');
+      span.classList.add('badge', 'badge-secondary', 'chip', 'ml-1', 'chip-selected');
+
+      if (userData.userRole == 'unregistered'){
+        span.setAttribute('disabled', true);
+      } else {
+        span.addEventListener('click', (evt) => {
+          this.ltvStatus[spanId] = !this.ltvStatus[spanId];
+          span.classList.toggle('chip-selected');
+          console.log('click')
+          this.update();
+        });
+      }
+
       this.ltvStatus[spanId] = true;
       span.innerHTML = spanText;
 
@@ -188,7 +212,7 @@
     bankListHeader.innerHTML = 'הבנק';
     const bankListUL = document.createElement('ul');
     bankListUL.classList.add('p-0', 'mb-0');
-
+    console.log(this);
     this.bankStatus = {};
     this.data.banks.forEach((bank) => {
       const buttonLI = document.createElement('li');
