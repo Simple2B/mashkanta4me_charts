@@ -7,7 +7,6 @@ class MortgageChart {
     canvas.setAttribute('height', 400);
 
     canvas.addEventListener('click', (evt) => {
-      canvasClickEvent();
       console.log('yes');
     });
 

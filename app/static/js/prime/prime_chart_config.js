@@ -23,8 +23,8 @@ const primeChartConfig = {
     scales: {
       xAxes: [{
         ticks: {
-          suggestedMin: 200000,
-          suggestedMax: 1800000,
+          suggestedMin: 0,
+          suggestedMax: 100,
           beginAtZero: false,
           callback: mortgageAddComma,
         },
@@ -38,8 +38,8 @@ const primeChartConfig = {
       }],
       yAxes: [{
         ticks: {
-          suggestedMin: 1000,
-          suggestedMax: 10000,
+          suggestedMin: 0,
+          suggestedMax: 5,
           beginAtZero: false,
           callback: mortgageAddComma
         },

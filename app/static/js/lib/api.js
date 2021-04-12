@@ -10,12 +10,16 @@ class Api {
     };
   }
 
-  getFetch(readyHandler){
+  getFetch(readyHandler, queryString=''){
     // make request without any data send
     const config = Object.assign({}, this.config);
     config.method = 'GET';
 
-    this._fetch(readyHandler, this.endpoint, config)
+    if (queryString){
+      queryString = '?q='.concat(JSON.stringify(queryString));
+    }
+
+    this._fetch(readyHandler, this.endpoint + queryString, config);
   }
 
   sendFetch(data, readyHandler){

@@ -1,5 +1,6 @@
 ﻿class PrimeDashboard {
-  constructor(data, containerSelector){
+  constructor(data, containerSelector, api){
+    this.api = api;
     this.ltvMapper = {
       '1': 'עד 45%',
       '2': '45% - 60%',
@@ -18,13 +19,14 @@
     }
 
     this.data = data;
-    console.log(this.data);
     const wrapper = document.querySelector(containerSelector);
-    // this.banks = data.Bank_name.filter(onlyUnique);
-    // this.setFilter(wrapper);
+    this.setFilter(wrapper);
+    primeChartConfig.data.datasets = this.data.dataSet;
     this.chart = new MortgageChart(primeChartConfig, wrapper);
+    this.viewByLoan = true;
 
-    //dashboards.prime.dashboard = this;
+    this.update();
+    //dashboards.prime.das  hboard = this;
     //dashboards.prime.currDataset = dashboards.analytics.data.change_monthly;
     //dashboards.prime.currentInterest = 'change_monthly';
 
@@ -47,6 +49,43 @@
     //}
 
     //dashboards.prime.changeChip = this.changeChip;
+  }
+
+  update(){
+    const query = {banks: [], ltv: [], bankView: this.viewByLoan};
+    // get bank buttons
+    Object.entries(this.bankStatus).map((status) => {
+      const [bank, on] = status;
+      if (on){
+        query.banks.push(bank);
+      }
+    });
+
+    // get ltv buttons
+    Object.entries(this.ltvStatus).map((status) => {
+      const [ltv, on] = status;
+      if (on){
+        query.ltv.push(ltv);
+      }
+    });
+
+    // get sliders value
+    query.years = this.yearsSlider.noUiSlider.get();
+    query.loan  = this.sliderInterest.noUiSlider.get();
+
+    for (let i = 0; i < query.years.length; i++){
+      query.years[i] = parseFloat(query.years[i]);
+    }
+
+    for (let i = 0; i < query.loan.length; i++){
+      query.loan[i] = parseFloat(query.loan[i]);
+    }
+
+    this.api.getFetch((data) => {
+      console.log(data);
+    }, query);
+
+    this.chart.chart.update();
   }
 
   setFilter(wrapper){
@@ -95,10 +134,10 @@
     yearsSliderContainer.classList.add('col-12', 'col-md-4', 'col-lg-2', 'filter-block-interest');
     const yearsSliderHeader = document.createElement('p');
     yearsSliderHeader.innerHTML = 'משך השנים';
-    const yearsSlider = document.createElement('div');
-    yearsSlider.setAttribute('id', 'sliderYears');
+    this.yearsSlider = document.createElement('div');
+    this.yearsSlider.setAttribute('id', 'sliderYears');
     yearsSliderContainer.appendChild(yearsSliderHeader);
-    yearsSliderContainer.appendChild(yearsSlider);
+    yearsSliderContainer.appendChild(this.yearsSlider);
     filterArea.appendChild(yearsSliderContainer);
 
     // loan filter
@@ -111,6 +150,7 @@
     const loanButtonsUL = document.createElement('ul');
     loanButtonsUL.classList.add('p-0', 'mb-0');
 
+    this.ltvStatus = {};
 
     [['LTV45', 'עד 45%'], ['LTV45-60', '45% - 60%'], ['LTV60', 'מעל 60%']].forEach((buttonData) => {
       const [spanId, spanText] = buttonData;
@@ -119,11 +159,13 @@
       const span = document.createElement('span');
       span.setAttribute('id', spanId);
       span.classList.add('badge', 'badge-secondary', 'chip', 'ml-1');
+      this.ltvStatus[spanId] = true;
       span.innerHTML = spanText;
 
       buttonLI.appendChild(span);
       loanButtonsUL.appendChild(buttonLI);
     });
+
     loanFilterContainer.appendChild(loanButtonsUL);
     filterArea.appendChild(loanFilterContainer);
 
@@ -132,11 +174,11 @@
     sliderInterestContainer.classList.add('col-12', 'col-md-6', 'col-lg-2', 'filter-block-interest');
     const sliderInterestHeader = document.createElement('p');
     sliderInterestHeader.innerHTML = 'ריבית שנתית';
-    const sliderInterest = document.createElement('div');
-    sliderInterest.setAttribute('id', 'sliderInterest');
+    this.sliderInterest = document.createElement('div');
+    this.sliderInterest.setAttribute('id', 'sliderInterest');
 
     sliderInterestContainer.appendChild(sliderInterestHeader);
-    sliderInterestContainer.appendChild(sliderInterest);
+    sliderInterestContainer.appendChild(this.sliderInterest);
     filterArea.appendChild(sliderInterestContainer);
 
     // banks list
@@ -147,7 +189,8 @@
     const bankListUL = document.createElement('ul');
     bankListUL.classList.add('p-0', 'mb-0');
 
-    this.banks.forEach((bank) => {
+    this.bankStatus = {};
+    this.data.banks.forEach((bank) => {
       const buttonLI = document.createElement('li');
       buttonLI.classList.add('d-inline-block', 'mb-1');
       const span = document.createElement('span');
@@ -157,12 +200,13 @@
       span.innerHTML = bank;
       buttonLI.appendChild(span);
       bankListUL.appendChild(buttonLI);
+      this.bankStatus[bank] = true;
     });
     bankListContainer.appendChild(bankListUL);
     filterArea.appendChild(bankListContainer);
     container.appendChild(filterArea);
 
-    [yearsSlider, sliderInterest].forEach((slider) => {
+    [this.yearsSlider, this.sliderInterest].forEach((slider) => {
       noUiSlider.create(slider, this.sliderOptions);
     });
 
