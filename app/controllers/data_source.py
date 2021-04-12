@@ -40,47 +40,79 @@ def data_processor(name: str):
 @data_processor("eligibility")
 @data_processor("variable_w")
 @data_processor("variable_wo")
-def get_prime_data(file_data: dict):
+def get_prime_data(file_data: dict, options: dict = {}):
+    years = [round(float(year)) for year in file_data["Years"]]
+    rates = [float(rate) for rate in file_data["Interest_rate"]]
+    max_x = max(years)
+    min_x = min(years)
+    max_y = max(rates)
+    min_y = min(rates)
+    range_years = options["years"] if "years" in options else [min_x, max_x]
+    range_loan = options["loan"] if "loan" in options else [min_y, max_y]
+    data_size = len(file_data["LTV"])
+    LTV = {1: "LTV <= 45%", 2: "45% <= LTV <= 60%", 3: "LTV>=60 [%]"}
+    all_banks = list(set(file_data["Bank_name"]))
+    banks = options["banks"] if "banks" in options else all_banks
+
     def get_lvt_data(lvt_level):
-        data_size = len(file_data["LTV"])
-        LTV = {1: "LTV <= 45%", 2: "45% <= LTV <= 60%", 3: "LTV>=60 [%]"}
-        idx = [i for i in range(data_size) if int(file_data["LTV"][i]) == lvt_level]
+        idx = [
+            i
+            for i in range(data_size)
+            if int(file_data["LTV"][i]) == lvt_level
+            and file_data["Bank_name"][i] in banks
+            and range_years[0] <= years[i] <= range_years[1]
+            and range_loan[0] <= rates[i] <= range_loan[1]
+        ]
         return [
             dict(
-                x=round(float(file_data["Years"][i])),
-                y=float(file_data["Interest_rate"][i]),
+                x=years[i],
+                y=rates[i],
                 bank=file_data["Bank_name"][i],
                 ltv=LTV[lvt_level],
             )
             for i in idx
         ]
 
-    return {
-        "banks": list(set(file_data["Bank_name"])),
-        "dataSet": [
+    data = {
+        "banks": all_banks,
+        "maxX": max_x,
+        "minX": min_x,
+        "maxY": max_y,
+        "minY": min_y,
+        "dataSet": [],
+    }
+    ltvs = options["ltv"] if "ltv" in options else ["LTV45", "LTV45-60", "LTV60"]
+    if "LTV45" in ltvs:
+        data["dataSet"] += [
             {
                 "backgroundColor": "rgba(52, 216, 153, 1)",
                 "data": get_lvt_data(1),
                 "jsId": "LTV45",
                 "label": "עד 45% מימון",
                 "pointRadius": 7,
-            },
+            }
+        ]
+    if "LTV45-60" in ltvs:
+        data["dataSet"] += [
             {
                 "backgroundColor": "rgba(255, 203, 25, 1)",
                 "data": get_lvt_data(2),
                 "jsId": "LTV45-60",
                 "label": "בין 45% ל- 60% מימון",
                 "pointRadius": 7,
-            },
+            }
+        ]
+    if "LTV60" in ltvs:
+        data["dataSet"] += [
             {
                 "backgroundColor": "rgba(255, 107, 101, 1)",
                 "data": get_lvt_data(3),
                 "jsId": "LTV60",
                 "label": "מעל 60% מימון",
                 "pointRadius": 7,
-            },
-        ],
-    }
+            }
+        ]
+    return data
 
 
 class ChartDataSource(object):
@@ -114,7 +146,7 @@ class ChartDataSource(object):
                         data[k] += [v]
         return data
 
-    def chart_data(self, chart_name: str) -> dict:
+    def chart_data(self, chart_name: str, options: dict = {}) -> dict:
         if chart_name not in DATASET_MAP_JSON:
             log(log.WARNING, "Asked unknown chart_name: [%s]", chart_name)
             return {}
@@ -126,6 +158,6 @@ class ChartDataSource(object):
                 pathlib.Path(EXCEL_FILES_DIR) / file_name, encoding="utf-8"
             )
         if chart_name in DATA_PROCESSOR:
-            return DATA_PROCESSOR[chart_name](data)
+            return DATA_PROCESSOR[chart_name](data, options)
 
         return data
