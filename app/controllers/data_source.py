@@ -26,9 +26,11 @@ EXCEL_FILES_DIR.mkdir(parents=True, exist_ok=True)
 DATA_PROCESSOR = {}
 
 
-def data_processor(name: str):
+def data_processor(name: str, bank_view=False):
     def decorator(func):
-        DATA_PROCESSOR[name] = func
+        if name not in DATA_PROCESSOR:
+            DATA_PROCESSOR[name] = {}
+        DATA_PROCESSOR[name][bank_view] = func
         return func
 
     return decorator
@@ -40,7 +42,7 @@ def data_processor(name: str):
 @data_processor("eligibility")
 @data_processor("variable_w")
 @data_processor("variable_wo")
-def get_prime_data(file_data: dict, options: dict = {}):
+def get_prime_data_ltv_view(file_data: dict, options: dict = {}):
     years = [round(float(year)) for year in file_data["Years"]]
     rates = [float(rate) for rate in file_data["Interest_rate"]]
     max_x = max(years)
@@ -115,6 +117,86 @@ def get_prime_data(file_data: dict, options: dict = {}):
     return data
 
 
+@data_processor("prime", bank_view=True)
+@data_processor("const_w", bank_view=True)
+@data_processor("const_wo", bank_view=True)
+@data_processor("eligibility", bank_view=True)
+@data_processor("variable_w", bank_view=True)
+@data_processor("variable_wo", bank_view=True)
+def get_prime_data_bank_view(file_data: dict, options: dict = {}):
+    years = [round(float(year)) for year in file_data["Years"]]
+    rates = [float(rate) for rate in file_data["Interest_rate"]]
+    max_x = max(years)
+    min_x = min(years)
+    max_y = max(rates)
+    min_y = min(rates)
+    range_years = options["years"] if "years" in options else [min_x, max_x]
+    range_loan = options["loan"] if "loan" in options else [min_y, max_y]
+    data_size = len(file_data["LTV"])
+    LTV = {1: "LTV <= 45%", 2: "45% <= LTV <= 60%", 3: "LTV>=60 [%]"}
+    all_banks = list(set(file_data["Bank_name"]))
+    banks = options["banks"] if "banks" in options else all_banks
+    ltvs = options["ltv"] if "ltv" in options else ["LTV45", "LTV45-60", "LTV60"]
+    LTV_INDEXES = {"LTV45": 1, "LTV45-60": 2, "LTV60": 3}
+    ltv_indexes = [LTV_INDEXES[ltv] for ltv in ltvs]
+    ltvs_all = [int(ltv) for ltv in file_data["LTV"]]
+
+    def get_color(index):
+        import random
+        colors = [
+            "rgba(255, 203, 25, 1)",
+            "rgba(255, 167, 25, 1)",
+            "rgba(52, 216, 153, 1)",
+            "rgba(16, 163, 255, 1)",
+            "rgba(255, 107, 101, 1)",
+            "rgba(121, 52, 216, 1)",
+            "rgba(216, 52, 121, 1)",
+            "rgba(168, 25, 177, 1)",
+        ]
+        if index >= len(colors):
+            return f"rgba({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)}, 1)"
+        return colors[index]
+
+    def get_bank_data(bank_name):
+        idx = [
+            i
+            for i in range(data_size)
+            if int(file_data["LTV"][i]) in ltv_indexes
+            and file_data["Bank_name"][i] == bank_name
+            and range_years[0] <= years[i] <= range_years[1]
+            and range_loan[0] <= rates[i] <= range_loan[1]
+        ]
+        return [
+            dict(
+                x=years[i],
+                y=rates[i],
+                bank=bank_name,
+                ltv=LTV[ltvs_all[i]],
+            )
+            for i in idx
+        ]
+
+    data = {
+        "banks": all_banks,
+        "maxX": max_x,
+        "minX": min_x,
+        "maxY": max_y,
+        "minY": min_y,
+        "dataSet": [],
+    }
+    for i, bank in enumerate(banks):
+        data["dataSet"] += [
+            {
+                "backgroundColor": get_color(i),
+                "data": get_bank_data(bank),
+                "jsId": bank,
+                "label": bank,
+                "pointRadius": 7,
+            }
+        ]
+    return data
+
+
 class ChartDataSource(object):
     def __init__(self) -> None:
         super().__init__()
@@ -150,6 +232,7 @@ class ChartDataSource(object):
         if chart_name not in DATASET_MAP_JSON:
             log(log.WARNING, "Asked unknown chart_name: [%s]", chart_name)
             return {}
+        bank_view = options["bankView"] if "bankView" in options else False
         file_name = DATASET_MAP_JSON[chart_name]
         try:
             data = self._basic_chart_data(pathlib.Path(EXCEL_FILES_DIR) / file_name)
@@ -158,6 +241,6 @@ class ChartDataSource(object):
                 pathlib.Path(EXCEL_FILES_DIR) / file_name, encoding="utf-8"
             )
         if chart_name in DATA_PROCESSOR:
-            return DATA_PROCESSOR[chart_name](data, options)
+            return DATA_PROCESSOR[chart_name][bank_view](data, options)
 
         return data
