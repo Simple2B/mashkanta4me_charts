@@ -49,29 +49,32 @@ def get_prime_data(file_data: dict):
             for i in idx
         ]
 
-    return [
-        {
-            "backgroundColor": "rgba(52, 216, 153, 1)",
-            "data": get_lvt_data(1),
-            "jsId": "LTV45",
-            "label": "עד 45% מימון",
-            "pointRadius": 7,
-        },
-        {
-            "backgroundColor": "rgba(255, 203, 25, 1)",
-            "data": get_lvt_data(2),
-            "jsId": "LTV45-60",
-            "label": "בין 45% ל- 60% מימון",
-            "pointRadius": 7,
-        },
-        {
-            "backgroundColor": "rgba(255, 107, 101, 1)",
-            "data": get_lvt_data(3),
-            "jsId": "LTV60",
-            "label": "מעל 60% מימון",
-            "pointRadius": 7,
-        },
-    ]
+    return {
+        "banks": set(file_data["Bank_name"]),
+        "dataSet": [
+            {
+                "backgroundColor": "rgba(52, 216, 153, 1)",
+                "data": get_lvt_data(1),
+                "jsId": "LTV45",
+                "label": "עד 45% מימון",
+                "pointRadius": 7,
+            },
+            {
+                "backgroundColor": "rgba(255, 203, 25, 1)",
+                "data": get_lvt_data(2),
+                "jsId": "LTV45-60",
+                "label": "בין 45% ל- 60% מימון",
+                "pointRadius": 7,
+            },
+            {
+                "backgroundColor": "rgba(255, 107, 101, 1)",
+                "data": get_lvt_data(3),
+                "jsId": "LTV60",
+                "label": "מעל 60% מימון",
+                "pointRadius": 7,
+            },
+        ],
+    }
 
 
 class ChartDataSource(object):
