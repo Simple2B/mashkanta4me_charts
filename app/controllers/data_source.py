@@ -50,7 +50,7 @@ def get_prime_data(file_data: dict):
         ]
 
     return {
-        "banks": set(file_data["Bank_name"]),
+        "banks": list(set(file_data["Bank_name"])),
         "dataSet": [
             {
                 "backgroundColor": "rgba(52, 216, 153, 1)",
