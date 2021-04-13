@@ -24,13 +24,13 @@
 
 <body dir="rtl">
   <input hidden id="user-role" value="{{ current_user.role }}">
+  <input hidden class="app-root" value="{{ app_root }}">
   <script src="{{ url_for('static', filename='js/base.js') }} "></script>
   {% block body %}{% endblock %}
   <!-- Option 1: Bootstrap Bundle with Popper -->
   <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }} "></script>
   <script src="{{ url_for( 'static', filename='js/cookies_handler.js' ) }} "></script>
 
-  <h1>{{  role  }}</h1>
 
   {% if role == 'unregistered' %}
     {% include "auth_modal.html" %}

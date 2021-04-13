@@ -8,6 +8,7 @@ class Api {
         'Content-Type': 'application/json'
       },
     };
+    this.appRoot = document.querySelector('.app-root').value;
   }
 
   getFetch(readyHandler, queryString=''){
@@ -40,8 +41,7 @@ class Api {
   }
 
   _fetch(readyHandler, endpoint, config){
-    console.log(window.location.href)
-    fetch(location.origin.concat('/dash/api/data/', endpoint), config).then((resp) => {
+    fetch(location.origin.concat(this.appRoot, '/api/data/', endpoint), config).then((resp) => {
       return resp.json();
     }).then((dataset => {
       readyHandler(dataset);
