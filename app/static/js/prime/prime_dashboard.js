@@ -1,11 +1,13 @@
-﻿class PrimeDashboard {
+﻿let primeDashboardCount = 0;
+
+class PrimeDashboard {
   constructor(data, containerSelector, api){
     this.api = api;
     this.ltvMapper = {
       '1': 'עד 45%',
       '2': '45% - 60%',
       '3': 'מעל 60%',
-    }
+    };
 
     this.sliderOptions = {
       tooltips: [wNumb({ decimals: 0, thousand: ',' }), wNumb({ decimals: 0, thousand: ',' })],
@@ -16,7 +18,7 @@
         'min': 0,
         'max': 30,
       },
-    }
+    };
 
     this.data = data;
     const wrapper = document.querySelector(containerSelector);
@@ -29,11 +31,11 @@
 
     this.viewByLoan = false;
 
-    this.setFilter(wrapper);
-
-    primeChartConfig.data.datasets = this.data.dataSet;
-    console.log(primeChartConfig)
-    this.chart = new MortgageChart(primeChartConfig, wrapper);
+    const reset = this.setFilter(wrapper);
+    //primeChartConfig.data.datasets = this.data.dataSet;
+    const chartConfig = createPrimeChartConfig();
+    this.chart = new MortgageChart(chartConfig, wrapper);
+    this.chart.chart.clear();
     this.update();
   }
 
@@ -83,7 +85,7 @@
       this.sliderInterest.noUiSlider.updateOptions({
         range: {'min': data.minY, 'max': data.maxY},
       });
-
+      this.chart.chart.clear();
       this.chart.chart.update();
     }, query);
 
@@ -111,20 +113,22 @@
     viewByRadioUL.classList.add('type-select', 'type-select-col');
 
     [['selectedLTV', 'יחס הלוואה'], ['selectedBank', 'בנק']].forEach((radioData) => {
-      const [inputId, labelText] = radioData;
+      const [radio, labelText] = radioData;
+      const inputClass = radio.concat(primeDashboardCount);
       const inputHTML = document.createElement('input');
       inputHTML.setAttribute('type', 'radio');
-      inputHTML.setAttribute('id', inputId);
-      inputHTML.classList.add('view_by');
+      inputHTML.setAttribute('class', inputClass);
 
-      inputHTML.setAttribute('id', inputId);
-      inputHTML.setAttribute('name', 'mortgageSwitchChart');
+      inputHTML.setAttribute('id', inputClass);
+
+      const inputName = 'mortgageSwitchChart'.concat(primeDashboardCount);
+      inputHTML.setAttribute('name', inputName);
 
       const checkDiv = document.createElement('div');
       checkDiv.classList.add('check');
 
       const label = document.createElement('label');
-      label.setAttribute('for', inputId);
+      label.setAttribute('for', inputClass);
       label.innerHTML = labelText;
 
       const listElement = document.createElement('li');
@@ -147,6 +151,9 @@
 
       viewByRadioUL.appendChild(listElement);
     });
+
+    viewByRadioUL.children[0].querySelector('input').setAttribute('checked', true);
+    primeDashboardCount++;
 
     viewByColumn.appendChild(viewByRadioUL);
     filterArea.appendChild(viewByColumn);
@@ -251,6 +258,7 @@
       bankListUL.appendChild(buttonLI);
       this.bankStatus[bank] = true;
     });
+
     bankListContainer.appendChild(bankListUL);
     filterArea.appendChild(bankListContainer);
     container.appendChild(filterArea);
@@ -302,9 +310,7 @@
     }
 
     wrapper.appendChild(resetButton);
-    document.querySelectorAll('.view_by').forEach((select) => {
-      select.setAttribute('checked', true);
-    });
+    return resetButton;
   }
 }
 

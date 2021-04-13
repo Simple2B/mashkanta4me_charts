@@ -98,7 +98,7 @@ function flask_auth() {
       wp_send_json_error( $errors_args );
   }
 
-  $user = get_user_by('email', $email ); 
+  $user = get_user_by('email', $email );
   if ( ! $user ) {
 
       $errors_args['error'] = 'email';
@@ -112,7 +112,7 @@ function flask_auth() {
       $errors_args['error'] = 'email';
       $errors_args['message'] = 'user not varified';
       wp_send_json_error( $errors_args );
-  } 
+  }
 
   $success = wp_signon(['user_login' => $user->user_login, 'user_password' => $pass, 'remember' => $remember], true);
   if (!is_wp_error($success)){
