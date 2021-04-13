@@ -30,7 +30,7 @@ DASHBOARD_ENDPOINTS = (
 
 @bp_index.route("/")
 def home():
-    return render_template("sitemap.html", data=DASHBOARD_ENDPOINTS)
+    return render_template("sitemap.html", role=current_user.role)
 
 
 @bp_index.route("/admin", methods=["GET"])

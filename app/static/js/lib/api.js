@@ -40,7 +40,8 @@ class Api {
   }
 
   _fetch(readyHandler, endpoint, config){
-    fetch('api/data/'.concat(endpoint), config).then((resp) => {
+    console.log(window.location.href)
+    fetch(location.origin.concat('/dash/api/data/', endpoint), config).then((resp) => {
       return resp.json();
     }).then((dataset => {
       readyHandler(dataset);
