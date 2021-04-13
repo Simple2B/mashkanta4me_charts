@@ -4,6 +4,7 @@ import csv
 import requests
 from config import BASE_DIR, BaseConfig as conf
 from app.logger import log
+from flask_login import current_user
 
 
 DATASET_MAP_JSON = {
@@ -55,6 +56,7 @@ def get_prime_data_ltv_view(file_data: dict, options: dict = {}):
     LTV = {1: "LTV <= 45%", 2: "45% <= LTV <= 60%", 3: "LTV>=60 [%]"}
     all_banks = list(set(file_data["Bank_name"]))
     banks = options["banks"] if "banks" in options else all_banks
+    loan_numbers = [n for n in file_data["loan_number"]]
 
     def get_lvt_data(lvt_level):
         idx = [
@@ -71,6 +73,9 @@ def get_prime_data_ltv_view(file_data: dict, options: dict = {}):
                 y=rates[i],
                 bank=file_data["Bank_name"][i],
                 ltv=LTV[lvt_level],
+                loan_number=loan_numbers[i]
+                if current_user and current_user.role == "paid"
+                else None,
             )
             for i in idx
         ]
@@ -140,9 +145,11 @@ def get_prime_data_bank_view(file_data: dict, options: dict = {}):
     LTV_INDEXES = {"LTV45": 1, "LTV45-60": 2, "LTV60": 3}
     ltv_indexes = [LTV_INDEXES[ltv] for ltv in ltvs]
     ltvs_all = [int(ltv) for ltv in file_data["LTV"]]
+    loan_numbers = [n for n in file_data["loan_number"]]
 
     def get_color(index):
         import random
+
         colors = [
             "rgba(255, 203, 25, 1)",
             "rgba(255, 167, 25, 1)",
@@ -172,6 +179,9 @@ def get_prime_data_bank_view(file_data: dict, options: dict = {}):
                 y=rates[i],
                 bank=bank_name,
                 ltv=LTV[ltvs_all[i]],
+                loan_number=loan_numbers[i]
+                if current_user and current_user.role == "paid"
+                else None,
             )
             for i in idx
         ]
