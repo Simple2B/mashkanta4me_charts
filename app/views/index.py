@@ -9,7 +9,7 @@ from flask import (
 )
 from flask_login import logout_user, login_required, current_user
 from app.controllers import ChartDataSource
-
+from config import BaseConfig as base_config
 
 bp_index = Blueprint("index", __name__)
 DASHBOARD_ENDPOINTS = (
@@ -30,7 +30,7 @@ DASHBOARD_ENDPOINTS = (
 
 @bp_index.route("/")
 def home():
-    return render_template("sitemap.html", role=current_user.role)
+    return render_template("sitemap.html", role=current_user.role, app_root=base_config.APP_ROOT)
 
 
 @bp_index.route("/admin", methods=["GET"])
