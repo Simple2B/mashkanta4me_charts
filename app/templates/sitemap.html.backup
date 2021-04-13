@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %} Sitemap {% endblock %}
+{% block body %}
+
+<div class="filters-form">
+    <h1>Available plots</h1>
+    <ul>
+        {% for route in data %}
+        <li class="mashkanta-sitemap-li">
+            <a class="mashkanta-sitemap-li-link" href="{{url_for(route)}}">{{ route }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Frames for all plots -->
+    <h1 class="mt-50 ml-10 mb-0">iframes</h1>
+    {% for route in data %}
+    <div class="mashkanta-full-width-wrapper">
+        <h2>{{route}}</h2>
+        <iframe id="mortgageIframe{{loop.index}}" class="mashkanta-full-width" src="{{ url_for(route) }}"></iframe>
+    </div>
+    {% endfor %}
+</div>
+
+
+<!-- iframe resize -->
+<script src="{{ url_for('static', filename='js/iframeResizer.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/iframe_resizer_for_host.js') }}"></script>
+
+{% endblock %}

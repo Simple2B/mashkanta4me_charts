@@ -1,4 +1,6 @@
-dashboards.prime.chartConfig = {
+function createPrimeChartConfig(){
+
+const primeChartConfig = {
   type: 'scatter',
   data: {datasets: []},
   options: {
@@ -8,10 +10,14 @@ dashboards.prime.chartConfig = {
       onClick: function (e) { e.stopPropagation(); }
     },
 
+
+    hover: {
+      mode: 'nearest'
+    },
+
+
     tooltips: {
-      callbacks: {
-        label: () => {},
-      }
+      enabled: false,
     },
 
     animation: { duration: 0 },
@@ -23,8 +29,8 @@ dashboards.prime.chartConfig = {
     scales: {
       xAxes: [{
         ticks: {
-          suggestedMin: 200000,
-          suggestedMax: 1800000,
+          suggestedMin: 0,
+          suggestedMax: 100,
           beginAtZero: false,
           callback: mortgageAddComma,
         },
@@ -38,8 +44,9 @@ dashboards.prime.chartConfig = {
       }],
       yAxes: [{
         ticks: {
-          suggestedMin: 1000,
-          suggestedMax: 10000,
+          suggestedMin: 0,
+          suggestedMax: 5,
+          stepSize: 0.4,
           beginAtZero: false,
           callback: mortgageAddComma
         },
@@ -93,27 +100,37 @@ dashboards.prime.chartConfig = {
   },
 }
 
-dashboards.prime.sliders = {
-  options: {
-    tooltips: [wNumb({ decimals: 0, thousand: ',' }), wNumb({ decimals: 0, thousand: ',' })],
-    connect: true,
-    direction: 'ltr',
-    start: [0, 1],
-    range: {
-      'min': 0,
-      'max': 1,
+
+if (userData.userRole === 'registered'){
+      primeChartConfig.options.tooltips = {
+        mode: 'single',
+        enabled: true,
+        callbacks: {
+          label: (tooltipItem, data) => {
+            console.log(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]);
+            var monthlyReturn = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].y || '';
+            let mortgageAmount = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].x || '';
+            let label = 'משכנתה בגובה: ' + mortgageAddComma(mortgageAmount) + ' ש״ח, תשלום חודשי ראשוני: ' + monthlyReturn + ' ש״ח';
+            return label;
+          },
+        }
+      }
+    } else if(userData.userRole === 'paid'){
+      primeChartConfig.options.tooltips = {
+        mode: 'single',
+        enabled: true,
+        callbacks: {
+          label: (tooltipItem, data) => {
+            const loanNumber = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]['loan_number'];
+            var monthlyReturn = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].y || '';
+            let mortgageAmount = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index].x || '';
+            let label = 'משכנתה בגובה: ' + mortgageAddComma(mortgageAmount) + ' ש״ח, תשלום חודשי ראשוני: ' + monthlyReturn + ' ש״ח' + ' [' + loanNumber + ']';
+            return label;
+          },
+        }
+      }
     }
-  }
+
+
+  return primeChartConfig;
 }
-
-document.addEventListener('DOMContentLoaded', (e) => {
-  const sliderMortgageAmount = document.getElementById('sliderMortgageAmount');
-  const sliderMonthlyReturn = document.getElementById('sliderMonthlyReturn');
-
-  dashboards.prime.sliders.HTML = {
-    mortgageAmount: sliderMortgageAmount,
-    monthlyReturn: sliderMonthlyReturn,
-  }
-});
-
-console.log(dashboards);

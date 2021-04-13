@@ -16,6 +16,7 @@ var mortgageOptions = {
 }
 
 var mortgageAddComma = (value, index, values) => {
+    return value;
     if(Math.abs(parseInt(value)) >= 1000){
         value = parseInt(value)
        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

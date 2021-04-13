@@ -213,3 +213,24 @@
     height: 25px;
     background-color: #4B77B9;
 }
+
+.disabled {
+    background-color: rgba(100, 100, 100, 0.3) !important;
+    background: rgba(100, 100, 100, 0.3) !important;
+    color: rgba(250, 250, 250, 0.3) !important;
+}
+
+.disabled-radio {
+    border-color: grey !important;
+}
+
+div:disabled {
+    background-color: rgba(100, 100, 100, 0.3) !important;
+    background: rgba(100, 100, 100, 0.3) !important;
+    color: rgba(250, 250, 250, 0.3) !important;
+}
+
+.disabled-button {
+    cursor: none;
+    opacity: .65;
+}

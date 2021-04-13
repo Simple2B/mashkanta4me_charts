@@ -224,7 +224,7 @@ class ChartDataSource(object):
     def charts(self):
         return DATASET_MAP_JSON.keys()
 
-    def _basic_chart_data(self, file_path: str, encoding: str = "iso8859-8"):
+    def _basic_chart_data(self, file_path: str, encoding: str = "iso8859-8") -> dict:
         with open(file_path, "r", encoding=encoding) as file:
             csv_reader = csv.reader(file)
             keys = None

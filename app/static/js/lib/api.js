@@ -10,12 +10,16 @@ class Api {
     };
   }
 
-  getFetch(readyHandler){
+  getFetch(readyHandler, queryString=''){
     // make request without any data send
     const config = Object.assign({}, this.config);
     config.method = 'GET';
 
-    this._fetch(readyHandler, this.endpoint, config)
+    if (queryString){
+      queryString = '?q='.concat(JSON.stringify(queryString));
+    }
+
+    this._fetch(readyHandler, this.endpoint + queryString, config);
   }
 
   sendFetch(data, readyHandler){
@@ -36,16 +40,11 @@ class Api {
   }
 
   _fetch(readyHandler, endpoint, config){
-    fetch('api/data/'.concat(endpoint), config).then((resp) => {
-      return resp.text();
-    }).then((data_raw) => {
-      const data = JSON.parse(data_raw.replace(/\bNaN\b/g, "null"));
-      if (data.error){
-        console.log(data.err_str);
-        return;
-      }
-
-      readyHandler(data.data);
-    });
+    console.log(window.location.href)
+    fetch(location.origin.concat('/dash/api/data/', endpoint), config).then((resp) => {
+      return resp.json();
+    }).then((dataset => {
+      readyHandler(dataset);
+    }));
   }
 }

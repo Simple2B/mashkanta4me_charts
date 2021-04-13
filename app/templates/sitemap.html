@@ -1,30 +1,41 @@
-{% extends "base.html" %}
-{% block title %} Sitemap {% endblock %}
+{% extends "dashboard_with_date.html" %}
+
+{% block title %}Sitemap{% endblock %}
+
+{% block css %}
+{{super()}}
+<link href="{{url_for('static', filename='styles/prime_index.css')}}" rel="stylesheet">
+{% endblock %}
+
+
 {% block body %}
 
-<div class="filters-form">
-    <h1>Available plots</h1>
-    <ul>
-        {% for route in data %}
-        <li class="mashkanta-sitemap-li">
-            <a class="mashkanta-sitemap-li-link" href="{{url_for(route)}}">{{ route }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-
-    <!-- Frames for all plots -->
-    <h1 class="mt-50 ml-10 mb-0">iframes</h1>
-    {% for route in data %}
-    <div class="mashkanta-full-width-wrapper">
-        <h2>{{route}}</h2>
-        <iframe id="mortgageIframe{{loop.index}}" class="mashkanta-full-width" src="{{ url_for(route) }}"></iframe>
-    </div>
-    {% endfor %}
+<div class="prime-container">
 </div>
+{{ super() }}
+{% endblock %}
 
 
-<!-- iframe resize -->
-<script src="{{ url_for('static', filename='js/iframeResizer.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/iframe_resizer_for_host.js') }}"></script>
+{% block js %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nouislider.min.css') }}">
+<script src="{{ url_for('static', filename='js/lib/nouislider.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lib/wNumb.min.js') }}"></script>
 
+<!--script src="{{ url_for('static', filename='js/prime_add_global.js') }}"></script-->
+<!--script src="{{ url_for('static', filename='js/prime_chart_config.js') }}"></script-->
+
+{% if role == 'unregistered' %}
+<!--script src="{{ url_for('static', filename='js/prime_index_filter_inactive.js') }}"></script-->
+<!--script src="{{ url_for('static', filename='js/prime_index_reset_btn_disabled.js') }}"></script-->
+{% else %}
+<!--script src="{{ url_for('static', filename='js/prime_filter_active.js') }}"></script-->
+<!--script src="{{ url_for('static', filename='js/prime_index_reset_btn.js') }}"></script-->
+{% endif %}
+
+<script src="{{ url_for('static', filename='js/lib/mortgage_chart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/prime/prime_chart_config.js') }}"></script>
+<script src="{{ url_for('static', filename='js/prime/prime_dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/sitemap.js') }}"></script>
+
+{#{ load_scripts(['custom_chartjs_functions', 'mortgage_chart', 'prime_dashboard', 'prime']) }#}
 {% endblock %}
