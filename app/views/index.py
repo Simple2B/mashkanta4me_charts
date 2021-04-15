@@ -33,6 +33,36 @@ def home():
     return render_template("sitemap.html", role=current_user.role, app_root=base_config.APP_ROOT)
 
 
+@bp_index.route("/dashboard1")
+def prime_dashboard1():
+    return render_template("dashboard1.html", role=current_user.role, app_root=base_config.APP_ROOT)
+
+
+@bp_index.route("/dashboard2")
+def prime_dashboard2():
+    return render_template("dashboard2.html", role=current_user.role, app_root=base_config.APP_ROOT)
+
+
+@bp_index.route("/dashboard3")
+def prime_dashboard3():
+    return render_template("dashboard3.html", role=current_user.role, app_root=base_config.APP_ROOT)
+
+
+@bp_index.route("/dashboard4")
+def prime_dashboard4():
+    return render_template("dashboard4.html", role=current_user.role, app_root=base_config.APP_ROOT)
+
+
+@bp_index.route("/dashboard5")
+def prime_dashboard5():
+    return render_template("dashboard5.html", role=current_user.role, app_root=base_config.APP_ROOT)
+
+
+@bp_index.route("/dashboard6")
+def prime_dashboard6():
+    return render_template("dashboard6.html", role=current_user.role, app_root=base_config.APP_ROOT)
+
+
 @bp_index.route("/admin", methods=["GET"])
 def admin():
     password_error_message = request.args.get("password_error_message")
