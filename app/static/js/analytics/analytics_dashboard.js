@@ -4,12 +4,6 @@ class AnalyticsDashboard {
   constructor(data, containerSelector, api){
     this.api = api;
 
-    this.ltvMapper = {
-      '1': 'עד 45%',
-      '2': '45% - 60%',
-      '3': 'מעל 60%',
-    };
-
     this.sliderOptions = {
       tooltips: [wNumb({ decimals: 0, thousand: ',' }), wNumb({ decimals: 0, thousand: ',' })],
       connect: true,
@@ -183,7 +177,25 @@ class AnalyticsDashboard {
     buttonsUL.classList.add('p-0', 'mb-0');
 
     this.viewByFilters = {};
-    this.data.viewTypeFilters.forEach((viewType, filters) => {
+
+    /*
+      data returned from back example:
+      data = {
+        viewTypeFilters: {
+          MonthlyReturnEdge: {
+            label: "Homebrew text in header",
+            buttons: [
+              label: "homebrew ...",
+              name: "10%",
+            ]
+          },
+          MortgageCostEdges: {...},
+          PaymentHalvedEdges: {...}
+        }
+      }
+    */
+
+    for (const [viewType, filters] of Object.entries(this.data.viewTypeFilters)){
       const filtersColumns = document.createElement('div');
       filtersColumns.classList.add('col-12', 'col-md-4', 'col-lg-3', 'filter-block-interest');
       const filtersHeader = document.createElement('p');
@@ -221,7 +233,7 @@ class AnalyticsDashboard {
         buttonsList.setAttribute('hidden', true);
         filtersContainer.appendChild(buttonsList);
       })
-    })
+    }
 
     filterArea.appendChild(loanFilterContainer);
 
