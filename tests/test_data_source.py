@@ -33,3 +33,9 @@ def test_get_prime_data():
             else:
                 assert len(data_set) == 3
             assert "data" in data_set[0]
+
+
+def test_get_analytics_data():
+    source = ChartDataSource()
+    data = source.chart_data("analytics", {"q": "options"})
+    assert data

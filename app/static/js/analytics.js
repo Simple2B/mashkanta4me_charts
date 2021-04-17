@@ -1,6 +1,6 @@
-document.addEventListener('DOMContentLoaded', (evt) => {
-  const api = new Api('analytics');
-  api.getFetch((data) => {
-    const dashboard = new AnalyticsDashboard(data);
+document.addEventListener("DOMContentLoaded", function (evt) {
+  var api = new Api("analytics");
+  api.getFetch(function (data) {
+    var dashboard = new AnalyticsDashboard(data);
   });
 });

@@ -16,6 +16,8 @@ DATASET_MAP_JSON = {
     "variable_wo": "VARIABLE_WO_CPI.csv",
 }
 
+ANALYTICS = "analytics"
+
 DATA_DIR_NAME = "data"
 EXCEL_FILES_DIR_NAME = "excel_files"
 
@@ -238,19 +240,41 @@ class ChartDataSource(object):
                         data[k] += [v]
         return data
 
+    def get_csv_file_data(self, file_name: str) -> dict:
+        try:
+            return self._basic_chart_data(pathlib.Path(EXCEL_FILES_DIR) / file_name)
+        except UnicodeDecodeError:
+            return self._basic_chart_data(
+                pathlib.Path(EXCEL_FILES_DIR) / file_name, encoding="utf-8"
+            )
+
     def chart_data(self, chart_name: str, options: dict = {}) -> dict:
+        if chart_name == ANALYTICS:
+            return self.analytics_data(options)
         if chart_name not in DATASET_MAP_JSON:
             log(log.WARNING, "Asked unknown chart_name: [%s]", chart_name)
             return {}
         bank_view = options["bankView"] if "bankView" in options else False
         file_name = DATASET_MAP_JSON[chart_name]
-        try:
-            data = self._basic_chart_data(pathlib.Path(EXCEL_FILES_DIR) / file_name)
-        except UnicodeDecodeError:
-            data = self._basic_chart_data(
-                pathlib.Path(EXCEL_FILES_DIR) / file_name, encoding="utf-8"
-            )
+        data = self.get_csv_file_data(file_name)
         if chart_name in DATA_PROCESSOR:
             return DATA_PROCESSOR[chart_name][bank_view](data, options)
 
+        return data
+
+    def analytics_data(self, options: dict = {}) -> dict:
+        if "q" not in options:
+            return {}
+        q = options["q"]
+        monthly_return_edges = self.get_csv_file_data("monthly_return_edges.csv")
+        mortgage_cost_edges = self.get_csv_file_data("mortgage_cost_edges.csv")
+        payment_halved_edges = self.get_csv_file_data("payment_halved_edges.csv")
+        data = {}
+        if q == "options":
+            data["viewTypeFilters"] = [
+
+            ]
+            pass
+        else:
+            pass
         return data

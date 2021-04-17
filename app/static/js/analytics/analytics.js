@@ -1,12 +1,9 @@
-document.addEventListener('DOMContentLoaded', (evt) => {
-  ['prime', 'const_w'].forEach((dashname) => {
-    const api = new Api(dashname);
-    const query = {
-      q: "options",
-    };
-    api.getFetch((data, query) => {
-
-      const dashboard = new PrimeDashboard(data, '.prime-container', api);
-    });
-  });
+document.addEventListener("DOMContentLoaded", function (evt) {
+  var api = new Api("analytics");
+  var query = {
+    q: "options",
+  };
+  api.getFetch(function (data) {
+    var dashboard = new AnalyticsDashboard(data, ".analytics-container", api);
+  }, query);
 });

@@ -1,6 +1,6 @@
 ﻿let analyticsDashboardCount = 0;
 
-class analyticsDashboard {
+class AnalyticsDashboard {
   constructor(data, containerSelector, api){
     this.api = api;
 
@@ -201,7 +201,7 @@ class analyticsDashboard {
         span.innerHTML = button.label;
         buttonLI.appendChild(span);
         buttonsList.appendChild(buttonLI);
-        
+
         this.viewByFilters[viewType][button.name] = {
           spanNode: span,
           activated: true,
@@ -222,7 +222,7 @@ class analyticsDashboard {
         filtersContainer.appendChild(buttonsList);
       })
     })
-    
+
     filterArea.appendChild(loanFilterContainer);
 
     // Interest slider

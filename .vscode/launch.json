@@ -17,7 +17,24 @@
             "args": [
                 "run",
                 "--port",
-                "5052",
+                "20002",
+            ],
+            "jinja": true
+        },
+        {
+            "name": "gate2.simple2b.net",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "wsgi:app",
+                "FLASK_ENV": "development",
+                "FLASK_DEBUG": "1"
+            },
+            "args": [
+                "run",
+                "--port",
+                "20002",
             ],
             "jinja": true
         }
