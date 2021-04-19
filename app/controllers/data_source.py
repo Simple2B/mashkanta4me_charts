@@ -346,27 +346,32 @@ class ChartDataSource(object):
             min_x = min(mortgage_sizes)
             max_y = max(monthly_payments)
             min_y = min(monthly_payments)
-            filters = options["filters"] if "filters" in options else []
+            filters = [int(i) for i in options["filters"]] if "filters" in options else []
             value_name = "danger" if view_type != "PaymentHalvedEdges" else "Time"
-            indexes = [i for i, v in enumerate(src[value_name]) if v in filters]
+            indexes = [i for i, v in enumerate(src[value_name]) if int(v) in filters]
             dangers = [int(danger) for danger in src[value_name]]
-            data = {
+            data.update({
                 # "banks": all_banks,
                 "maxX": max_x,
                 "minX": min_x,
                 "maxY": max_y,
                 "minY": min_y,
+
                 "dataSet": [
                     {
-                        "danger": dangers[i],
-                        "x": mortgage_sizes[i],
-                        "y": monthly_payments[i],
                         "pointRadius": 7,
-                        "backgroundColor": get_color(dangers[i]),
-                        "label": data["viewTypeFilters"][view_type]["buttons"][dangers[i]]
+                        "backgroundColor": get_color(filter),
+                        "label": data["viewTypeFilters"][view_type]["buttons"][filter-1]["label"],
+                        "data": [
+                            {
+                                "danger": danger,
+                                "x": mortgage_sizes[i],
+                                "y": monthly_payments[i],
+                            }
+                            for i, danger in enumerate(dangers) if int(danger) == filter
+                        ]
                     }
-                    for i in indexes
+                    for filter in filters
                 ],
-            }
-            assert src
+            })
         return data
