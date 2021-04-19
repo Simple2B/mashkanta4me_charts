@@ -124,6 +124,24 @@ def get_prime_data_ltv_view(file_data: dict, options: dict = {}):
     return data
 
 
+def get_color(index):
+    import random
+
+    colors = [
+        "rgba(255, 203, 25, 1)",
+        "rgba(255, 167, 25, 1)",
+        "rgba(52, 216, 153, 1)",
+        "rgba(16, 163, 255, 1)",
+        "rgba(255, 107, 101, 1)",
+        "rgba(121, 52, 216, 1)",
+        "rgba(216, 52, 121, 1)",
+        "rgba(168, 25, 177, 1)",
+    ]
+    if index >= len(colors):
+        return f"rgba({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)}, 1)"
+    return colors[index]
+
+
 @data_processor("prime", bank_view=True)
 @data_processor("const_w", bank_view=True)
 @data_processor("const_wo", bank_view=True)
@@ -148,23 +166,6 @@ def get_prime_data_bank_view(file_data: dict, options: dict = {}):
     ltv_indexes = [LTV_INDEXES[ltv] for ltv in ltvs]
     ltvs_all = [int(ltv) for ltv in file_data["LTV"]]
     loan_numbers = [n for n in file_data["loan_number"]]
-
-    def get_color(index):
-        import random
-
-        colors = [
-            "rgba(255, 203, 25, 1)",
-            "rgba(255, 167, 25, 1)",
-            "rgba(52, 216, 153, 1)",
-            "rgba(16, 163, 255, 1)",
-            "rgba(255, 107, 101, 1)",
-            "rgba(121, 52, 216, 1)",
-            "rgba(216, 52, 121, 1)",
-            "rgba(168, 25, 177, 1)",
-        ]
-        if index >= len(colors):
-            return f"rgba({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)}, 1)"
-        return colors[index]
 
     def get_bank_data(bank_name):
         idx = [
@@ -263,76 +264,70 @@ class ChartDataSource(object):
         return data
 
     def analytics_data(self, options: dict = {}) -> dict:
-        if "q" in options:
-            q = options["q"]
+        monthly_return_edges = [
+            round(float(i), 2)
+            for i in self.get_csv_file_data("monthly_return_edges.csv")
+        ]
+        mortgage_cost_edges = [
+            round(float(i), 2)
+            for i in self.get_csv_file_data("mortgage_cost_edges.csv")
+        ]
+        payment_halved_edges = [
+            round(float(i))
+            for i in self.get_csv_file_data("payment_halved_edges.csv")
+        ]
+        data = {
+            "viewTypeFilters": {
+                "MonthlyReturnEdges": {
+                    "label": "זינוק מקסימלי חזוי בהחזר החודשי",
+                    "buttons": [
+                        {
+                            "label": f"{monthly_return_edges[i]}% עד",
+                            "name": i + 1,
+                        }
+                        for i in range(len(monthly_return_edges))
+                    ],
+                },
+                "MortgageCostEdges": {
+                    "label": "עלות לשקל בודד [ש״ח]",
+                    "buttons": [
+                        {"label": f"{v} עד", "name": i}
+                        for i, v in enumerate(mortgage_cost_edges)
+                        if v > 0
+                    ],
+                },
+                "PaymentHalvedEdges": {
+                    "label": "מתי הקרן תרד במחצית - כתלות בגודלה ובהחזר החודשי (הראשוני)",
+                    "buttons": [
+                        {
+                            "label": f"בין {payment_halved_edges[i-1]} ל- {s} שנים",
+                            "name": i,
+                        }
+                        if i > 1
+                        else {
+                            "label": f"עד {s} שנים",
+                            "name": i,
+                        }
+                        for i, s in enumerate(payment_halved_edges)
+                        if i > 0
+                    ],
+                },
+            }
+        }
+        s = monthly_return_edges[-1]
+        data["viewTypeFilters"]["MonthlyReturnEdges"]["buttons"] += [
+            {"label": f"{s}% מעל", "name": 1 + len(monthly_return_edges)}
+        ]
+        s = mortgage_cost_edges[-1]
+        data["viewTypeFilters"]["MortgageCostEdges"]["buttons"] += [
+            {"label": f"{s} מעל", "name": len(mortgage_cost_edges)}
+        ]
+        s = payment_halved_edges[-1]
+        data["viewTypeFilters"]["PaymentHalvedEdges"]["buttons"] += [
+            {"label": f"מעל {s} שנים", "name": len(payment_halved_edges)}
+        ]
 
-            if q == "options":
-                monthly_return_edges = [
-                    round(float(i), 2)
-                    for i in self.get_csv_file_data("monthly_return_edges.csv")
-                ]
-                mortgage_cost_edges = [
-                    round(float(i), 2)
-                    for i in self.get_csv_file_data("mortgage_cost_edges.csv")
-                ]
-                payment_halved_edges = [
-                    round(float(i))
-                    for i in self.get_csv_file_data("payment_halved_edges.csv")
-                ]
-                data = {
-                    "viewTypeFilters": {
-                        "MonthlyReturnEdges": {
-                            "label": "זינוק מקסימלי חזוי בהחזר החודשי",
-                            "buttons": [
-                                {
-                                    "label": f"{monthly_return_edges[i]}% עד",
-                                    "name": i + 1,
-                                }
-                                for i in range(len(monthly_return_edges))
-                            ],
-                        },
-                        "MortgageCostEdges": {
-                            "label": "עלות לשקל בודד [ש״ח]",
-                            "buttons": [
-                                {"label": f"{v} עד", "name": i}
-                                for i, v in enumerate(mortgage_cost_edges)
-                                if v > 0
-                            ],
-                        },
-                        "PaymentHalvedEdges": {
-                            "label": "מתי הקרן תרד במחצית - כתלות בגודלה ובהחזר החודשי (הראשוני)",
-                            "buttons": [
-                                {
-                                    "label": f"בין {payment_halved_edges[i-1]} ל- {s} שנים",
-                                    "name": i,
-                                }
-                                if i > 1
-                                else {
-                                    "label": f"עד {s} שנים",
-                                    "name": i,
-                                }
-                                for i, s in enumerate(payment_halved_edges)
-                                if i > 0
-                            ],
-                        },
-                    }
-                }
-                s = monthly_return_edges[-1]
-                data["viewTypeFilters"]["MonthlyReturnEdges"]["buttons"] += [
-                    {"label": f"{s}% מעל", "name": 1 + len(monthly_return_edges)}
-                ]
-                s = mortgage_cost_edges[-1]
-                data["viewTypeFilters"]["MortgageCostEdges"]["buttons"] += [
-                    {"label": f"{s} מעל", "name": len(mortgage_cost_edges)}
-                ]
-                s = payment_halved_edges[-1]
-                data["viewTypeFilters"]["PaymentHalvedEdges"]["buttons"] += [
-                    {"label": f"מעל {s} שנים", "name": len(payment_halved_edges)}
-                ]
-        else:
-            if "viewType" not in options:
-                log(log.ERROR, "viewType must be in options data")
-                return {}
+        if "viewType" in options:
             view_type = options["viewType"]
             # get data by view_type:
             DATA_FILE = {
@@ -366,6 +361,9 @@ class ChartDataSource(object):
                         "danger": dangers[i],
                         "x": mortgage_sizes[i],
                         "y": monthly_payments[i],
+                        "pointRadius": 7,
+                        "backgroundColor": get_color(dangers[i]),
+                        "label": data["viewTypeFilters"][view_type]["buttons"][dangers[i]]
                     }
                     for i in indexes
                 ],
