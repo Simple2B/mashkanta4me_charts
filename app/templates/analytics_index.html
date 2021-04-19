@@ -1,6 +1,6 @@
 {% extends "dashboard_with_date.html" %}
 
-{% block title %}Prime Index{% endblock %}
+{% block title %}Analytics Index{% endblock %}
 
 {% block css %}
 {{super()}}
@@ -10,17 +10,15 @@
 
 {% block body %}
 
-<div class="prime-container">
+<div class="analytics-container">
 </div>
 {{ super() }}
 {% endblock %}
-
 
 {% block js %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/nouislider.min.css') }}">
 <script src="{{ url_for('static', filename='js/lib/nouislider.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lib/wNumb.min.js') }}"></script>
-
 
 <script src="{{ url_for('static', filename='js/lib/mortgage_chart.js') }}"></script>
 <script src="{{ url_for('static', filename='js/analytics/analytics_chart_config.js') }}"></script>

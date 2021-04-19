@@ -266,15 +266,51 @@ class ChartDataSource(object):
         if "q" not in options:
             return {}
         q = options["q"]
-        monthly_return_edges = self.get_csv_file_data("monthly_return_edges.csv")
-        mortgage_cost_edges = self.get_csv_file_data("mortgage_cost_edges.csv")
-        payment_halved_edges = self.get_csv_file_data("payment_halved_edges.csv")
-        data = {}
-        if q == "options":
-            data["viewTypeFilters"] = [
 
-            ]
-            pass
+        if q == "options":
+            monthly_return_edges = [round(float(i), 2) for i in self.get_csv_file_data("monthly_return_edges.csv")]
+            mortgage_cost_edges = [round(float(i), 2) for i in self.get_csv_file_data("mortgage_cost_edges.csv")]
+            payment_halved_edges = [round(float(i)) for i in self.get_csv_file_data("payment_halved_edges.csv")]
+            data = {
+                "viewTypeFilters": {
+                    "MonthlyReturnEdge": {
+                        "label": "זינוק מקסימלי חזוי בהחזר החודשי",
+                        "buttons": [
+                            {"label": f"{s}% עד", "name": f"less {s}"}
+                            for s in monthly_return_edges
+                        ],
+                    },
+                    "MortgageCostEdges": {
+                        "label": "עלות לשקל בודד [ש״ח]",
+                        "buttons": [
+                            {"label": f"{i} עד", "name": f"less {i}"}
+                            for i in mortgage_cost_edges
+                        ],
+                    },
+                    "PaymentHalvedEdges": {
+                        "label": "מתי הקרן תרד במחצית - כתלות בגודלה ובהחזר החודשי (הראשוני)",
+                        "buttons": [
+                            {
+                                "label": f"בין {payment_halved_edges[i-1]} ל- {payment_halved_edges[i]} שנים",
+                                "name": f"less {payment_halved_edges[i]}%"
+                            }
+                            if i > 0 else
+                            {
+                                "label": f"עד {payment_halved_edges[i]} שנים",
+                                "name": f"less {payment_halved_edges[i]}%"
+                            }
+                            for i in range(len(payment_halved_edges))
+                        ],
+                    },
+                }
+            }
+            # "מעל 40%"
+            s = monthly_return_edges[-1]
+            data["viewTypeFilters"]["MonthlyReturnEdge"]["buttons"] += [{"label": f"{s}% מעל", "name": f"more {s}"}]
+            s = mortgage_cost_edges[-1]
+            data["viewTypeFilters"]["MortgageCostEdges"]["buttons"] += [{"label": f"{s} מעל", "name": f"more {s}"}]
+            s = payment_halved_edges[-1]
+            data["viewTypeFilters"]["PaymentHalvedEdges"]["buttons"] += [{"label": f"מעל {s} שנים", "name": f"more {s}"}]
         else:
             pass
         return data
