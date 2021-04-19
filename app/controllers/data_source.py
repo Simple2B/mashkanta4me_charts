@@ -263,93 +263,112 @@ class ChartDataSource(object):
         return data
 
     def analytics_data(self, options: dict = {}) -> dict:
-        if "q" not in options:
-            return {}
-        q = options["q"]
+        if "q" in options:
+            q = options["q"]
 
-        if q == "options":
-            monthly_return_edges = [
-                round(float(i), 2)
-                for i in self.get_csv_file_data("monthly_return_edges.csv")
-            ]
-            mortgage_cost_edges = [
-                round(float(i), 2)
-                for i in self.get_csv_file_data("mortgage_cost_edges.csv")
-            ]
-            payment_halved_edges = [
-                round(float(i))
-                for i in self.get_csv_file_data("payment_halved_edges.csv")
-            ]
-            data = {
-                "viewTypeFilters": {
-                    "MonthlyReturnEdges": {
-                        "label": "זינוק מקסימלי חזוי בהחזר החודשי",
-                        "buttons": [
-                            {"label": f"{monthly_return_edges[i]}% עד", "name": i + 1}
-                            for i in range(len(monthly_return_edges))
-                        ],
-                    },
-                    "MortgageCostEdges": {
-                        "label": "עלות לשקל בודד [ש״ח]",
-                        "buttons": [
-                            {"label": f"{v} עד", "name": i}
-                            for i, v in enumerate(mortgage_cost_edges) if v > 0
-                        ],
-                    },
-                    "PaymentHalvedEdges": {
-                        "label": "מתי הקרן תרד במחצית - כתלות בגודלה ובהחזר החודשי (הראשוני)",
-                        "buttons": [
-                            {
-                                "label": f"בין {payment_halved_edges[i-1]} ל- {s} שנים",
-                                "name": i,
-                            }
-                            if i > 1
-                            else {
-                                "label": f"עד {s} שנים",
-                                "name": i,
-                            }
-                            for i, s in enumerate(payment_halved_edges) if i > 0
-                        ],
-                    },
+            if q == "options":
+                monthly_return_edges = [
+                    round(float(i), 2)
+                    for i in self.get_csv_file_data("monthly_return_edges.csv")
+                ]
+                mortgage_cost_edges = [
+                    round(float(i), 2)
+                    for i in self.get_csv_file_data("mortgage_cost_edges.csv")
+                ]
+                payment_halved_edges = [
+                    round(float(i))
+                    for i in self.get_csv_file_data("payment_halved_edges.csv")
+                ]
+                data = {
+                    "viewTypeFilters": {
+                        "MonthlyReturnEdges": {
+                            "label": "זינוק מקסימלי חזוי בהחזר החודשי",
+                            "buttons": [
+                                {
+                                    "label": f"{monthly_return_edges[i]}% עד",
+                                    "name": i + 1,
+                                }
+                                for i in range(len(monthly_return_edges))
+                            ],
+                        },
+                        "MortgageCostEdges": {
+                            "label": "עלות לשקל בודד [ש״ח]",
+                            "buttons": [
+                                {"label": f"{v} עד", "name": i}
+                                for i, v in enumerate(mortgage_cost_edges)
+                                if v > 0
+                            ],
+                        },
+                        "PaymentHalvedEdges": {
+                            "label": "מתי הקרן תרד במחצית - כתלות בגודלה ובהחזר החודשי (הראשוני)",
+                            "buttons": [
+                                {
+                                    "label": f"בין {payment_halved_edges[i-1]} ל- {s} שנים",
+                                    "name": i,
+                                }
+                                if i > 1
+                                else {
+                                    "label": f"עד {s} שנים",
+                                    "name": i,
+                                }
+                                for i, s in enumerate(payment_halved_edges)
+                                if i > 0
+                            ],
+                        },
+                    }
                 }
-            }
-            s = monthly_return_edges[-1]
-            data["viewTypeFilters"]["MonthlyReturnEdges"]["buttons"] += [
-                {"label": f"{s}% מעל", "name": 1+len(monthly_return_edges)}
-            ]
-            s = mortgage_cost_edges[-1]
-            data["viewTypeFilters"]["MortgageCostEdges"]["buttons"] += [
-                {"label": f"{s} מעל", "name": len(mortgage_cost_edges)}
-            ]
-            s = payment_halved_edges[-1]
-            data["viewTypeFilters"]["PaymentHalvedEdges"]["buttons"] += [
-                {"label": f"מעל {s} שנים", "name": len(payment_halved_edges)}
-            ]
+                s = monthly_return_edges[-1]
+                data["viewTypeFilters"]["MonthlyReturnEdges"]["buttons"] += [
+                    {"label": f"{s}% מעל", "name": 1 + len(monthly_return_edges)}
+                ]
+                s = mortgage_cost_edges[-1]
+                data["viewTypeFilters"]["MortgageCostEdges"]["buttons"] += [
+                    {"label": f"{s} מעל", "name": len(mortgage_cost_edges)}
+                ]
+                s = payment_halved_edges[-1]
+                data["viewTypeFilters"]["PaymentHalvedEdges"]["buttons"] += [
+                    {"label": f"מעל {s} שנים", "name": len(payment_halved_edges)}
+                ]
         else:
-            if "viewType" not in q:
+            if "viewType" not in options:
                 log(log.ERROR, "viewType must be in options data")
                 return {}
-            view_type = q["viewType"]
+            view_type = options["viewType"]
             # get data by view_type:
             DATA_FILE = {
                 "MonthlyReturnEdges": "change_in_monthly_return_as_function_of_first_payment.csv",
                 "MortgageCostEdges": "loan_cost_as_function_of_monthly_payment.csv",
-                "PaymentHalvedEdges": "Principal_halved_function_of_monthly_payment.csv"
+                "PaymentHalvedEdges": "Principal_halved_function_of_monthly_payment.csv",
             }
             src = self.get_csv_file_data(DATA_FILE[view_type])
-            mortgage_sizes = [int(mortgage_size) for mortgage_size in src["mortgage_size"]]
-            monthly_payments = [float(monthly_payment) for monthly_payment in src["monthly_payment"]]
+            mortgage_sizes = [
+                int(mortgage_size) for mortgage_size in src["mortgage_size"]
+            ]
+            monthly_payments = [
+                float(monthly_payment) for monthly_payment in src["monthly_payment"]
+            ]
             max_x = max(mortgage_sizes)
             min_x = min(mortgage_sizes)
             max_y = max(monthly_payments)
             min_y = min(monthly_payments)
+            filters = options["filters"] if "filters" in options else []
+            value_name = "danger" if view_type != "PaymentHalvedEdges" else "Time"
+            indexes = [i for i, v in enumerate(src[value_name]) if v in filters]
+            dangers = [int(danger) for danger in src[value_name]]
             data = {
                 # "banks": all_banks,
                 "maxX": max_x,
                 "minX": min_x,
                 "maxY": max_y,
                 "minY": min_y,
-                "dataSet": [],
+                "dataSet": [
+                    {
+                        "danger": dangers[i],
+                        "x": mortgage_sizes[i],
+                        "y": monthly_payments[i],
+                    }
+                    for i in indexes
+                ],
             }
             assert src
         return data
