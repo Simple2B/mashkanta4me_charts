@@ -38,22 +38,17 @@ class AnalyticsDashboard {
   }
 
   update() {
-    const query = { banks: [], ltv: [], viewType: this.viewType };
-    // get bank buttons
-    Object.entries(this.bankStatus).map((status) => {
-      const [bank, on] = status;
-      if (on) {
-        query.banks.push(bank);
-      }
-    });
+    const query = { viewType: this.viewType, filters: [] };
 
-    // get ltv buttons
-    Object.entries(this.ltvStatus).map((status) => {
-      const [ltv, on] = status;
-      if (on) {
-        query.ltv.push(ltv);
+    // generation buttons
+    console.log(this.viewByFilters[this.viewType]);
+    Object.entries(this.viewByFilters[this.viewType]).map((button) => {
+      console.log(button)
+      const [buttonName, buttonData] = button;
+      if (buttonData.activated) {
+        query.filters.push(buttonName);
       }
-    });
+    })
 
     // get sliders value
     query.years = this.yearsSlider.noUiSlider.get();
@@ -66,25 +61,26 @@ class AnalyticsDashboard {
     for (let i = 0; i < query.loan.length; i++) {
       query.loan[i] = parseFloat(query.loan[i]);
     }
-
+    const chart = this.chart;
+    console.log(query);
     this.api.getFetch(function (data) {
-      this.chart.chart.data.datasets = data.dataSet;
+      chart.chart.data.datasets = data.dataSet;
       // dashboard charts ranges
       // x range
-      this.chart.chart.options.scales.xAxes[0].ticks.suggestedMin = data.minX;
-      this.chart.chart.options.scales.xAxes[0].ticks.suggestedMax = data.maxX;
+      chart.chart.options.scales.xAxes[0].ticks.suggestedMin = data.minX;
+      chart.chart.options.scales.xAxes[0].ticks.suggestedMax = data.maxX;
       // y range
-      this.chart.chart.options.scales.yAxes[0].ticks.suggestedMin = data.minY;
-      this.chart.chart.options.scales.yAxes[0].ticks.suggestedMax = data.maxY;
+      chart.chart.options.scales.yAxes[0].ticks.suggestedMin = data.minY;
+      chart.chart.options.scales.yAxes[0].ticks.suggestedMax = data.maxY;
 
-      this.yearsSlider.noUiSlider.updateOptions({
-        range: { min: data.minX, max: data.maxX },
-      });
-      this.sliderInterest.noUiSlider.updateOptions({
-        range: { min: data.minY, max: data.maxY },
-      });
-      this.chart.chart.clear();
-      this.chart.chart.update();
+      // this.yearsSlider.noUiSlider.updateOptions({
+      //   range: { min: data.minX, max: data.maxX },
+      // });
+      // this.sliderInterest.noUiSlider.updateOptions({
+      //   range: { min: data.minY, max: data.maxY },
+      // });
+      chart.chart.clear();
+      chart.chart.update();
     }, query);
   }
 
@@ -160,7 +156,7 @@ class AnalyticsDashboard {
     viewByRadioUL.children[0]
       .querySelector("input")
       .setAttribute("checked", true);
-    this.viewType = "MonthlyReturnEdge";
+    this.viewType = "MonthlyReturnEdges";
     analyticsDashboardCount++;
 
     viewByColumn.appendChild(viewByRadioUL);
@@ -217,9 +213,7 @@ class AnalyticsDashboard {
       }
     */
 
-    for (const [viewType, filters] of Object.entries(
-      this.data.viewTypeFilters
-    )) {
+    for (const [viewType, filters] of Object.entries(this.data.viewTypeFilters)) {
       const filtersColumns = document.createElement("div");
       filtersColumns.classList.add(
         "col-12",
@@ -229,7 +223,8 @@ class AnalyticsDashboard {
       );
       const filtersHeader = document.createElement("p");
       filtersHeader.innerHTML = filters.label;
-      filtersContainer.appendChild(filtersHeader);
+      // filtersContainer.appendChild(filtersHeader);
+      const buttonListContainer = document.createElement("div");
       const buttonsList = document.createElement("ul");
       buttonsList.classList.add("p-0", "mb-0");
       this.viewByFilters[viewType] = {};
@@ -266,12 +261,16 @@ class AnalyticsDashboard {
             this.update();
           });
         }
-        buttonsList.setAttribute("hidden", true);
-        filtersContainer.appendChild(buttonsList);
+        buttonListContainer.setAttribute("hidden", true);
+        buttonListContainer.appendChild(filtersHeader);
+        buttonListContainer.appendChild(buttonsList);
+        filtersContainer.appendChild(buttonListContainer);
       });
     }
 
-    filterArea.appendChild(loanFilterContainer);
+    filterArea.appendChild(filtersContainer);
+    const span = this.viewByFilters[this.viewType]['~`spanNode'];
+    console.log(span);
 
     // Interest slider
     const sliderInterestContainer = document.createElement("div");
