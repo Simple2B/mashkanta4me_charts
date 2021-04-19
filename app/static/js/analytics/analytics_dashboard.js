@@ -115,7 +115,7 @@ class AnalyticsDashboard {
     viewByRadioUL.classList.add("type-select", "type-select-col");
 
     [
-      ["MonthlyReturnEdge", "זינוק מקסימלי חזוי בהחזר החודשי"],
+      ["MonthlyReturnEdges", "זינוק מקסימלי חזוי בהחזר החודשי"],
       ["MortgageCostEdges", "עלות המשכנתה לשקל"],
       ["PaymentHalvedEdges", "מתי הקרן תרד במחצית"],
     ].forEach((radioData) => {

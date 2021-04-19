@@ -39,3 +39,9 @@ def test_get_analytics_data():
     source = ChartDataSource()
     data = source.chart_data("analytics", {"q": "options"})
     assert data
+    data = source.chart_data("analytics", {"q": {"viewType": "MonthlyReturnEdges"}})
+    assert data
+    data = source.chart_data("analytics", {"q": {"viewType": "MortgageCostEdges"}})
+    assert data
+    data = source.chart_data("analytics", {"q": {"viewType": "PaymentHalvedEdges"}})
+    assert data
