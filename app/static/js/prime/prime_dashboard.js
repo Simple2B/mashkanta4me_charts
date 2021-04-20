@@ -70,6 +70,7 @@ class PrimeDashboard {
     }
 
     this.api.getFetch((data) => {
+      console.log(data);
       this.chart.chart.data.datasets = data.dataSet;
       // dashboard charts ranges
       // x range

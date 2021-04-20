@@ -1,32 +1,29 @@
 ﻿let analyticsDashboardCount = 0;
 
-class analyticsDashboard {
-  constructor(data, containerSelector, api){
+class AnalyticsDashboard {
+  constructor(data, containerSelector, api) {
     this.api = api;
 
-    this.ltvMapper = {
-      '1': 'עד 45%',
-      '2': '45% - 60%',
-      '3': 'מעל 60%',
-    };
-
     this.sliderOptions = {
-      tooltips: [wNumb({ decimals: 0, thousand: ',' }), wNumb({ decimals: 0, thousand: ',' })],
+      tooltips: [
+        wNumb({ decimals: 0, thousand: "," }),
+        wNumb({ decimals: 0, thousand: "," }),
+      ],
       connect: true,
-      direction: 'ltr',
+      direction: "ltr",
       start: [0, 30],
       range: {
-        'min': 0,
-        'max': 30,
+        min: 0,
+        max: 30,
       },
     };
 
     this.data = data;
     const wrapper = document.querySelector(containerSelector);
 
-    if (userData.userRole === 'unregistered'){
-      wrapper.addEventListener('click', (evt) => {
-        wpAuthModal.style.display = 'block';
+    if (userData.userRole === "unregistered") {
+      wrapper.addEventListener("click", (evt) => {
+        wpAuthModal.style.display = "block";
       });
     }
 
@@ -34,117 +31,121 @@ class analyticsDashboard {
 
     const reset = this.setFilter(wrapper);
     //primeChartConfig.data.datasets = this.data.dataSet;
-    const chartConfig = createPrimeChartConfig();
+    const chartConfig = createAnalyticsChartConfig();
     this.chart = new MortgageChart(chartConfig, wrapper);
     this.chart.chart.clear();
     this.update();
   }
 
-  update(){
-    const query = {banks: [], ltv: [], viewType: this.viewType};
-    // get bank buttons
-    Object.entries(this.bankStatus).map((status) => {
-      const [bank, on] = status;
-      if (on){
-        query.banks.push(bank);
-      }
-    });
+  update() {
+    const query = { viewType: this.viewType, filters: [] };
 
-    // get ltv buttons
-    Object.entries(this.ltvStatus).map((status) => {
-      const [ltv, on] = status;
-      if (on){
-        query.ltv.push(ltv);
+    // generation buttons
+    console.log(this.viewByFilters[this.viewType]);
+    Object.entries(this.viewByFilters[this.viewType]).map((button) => {
+      console.log(button)
+      const [buttonName, buttonData] = button;
+      if (buttonData.activated) {
+        query.filters.push(buttonName);
       }
-    });
+    })
 
     // get sliders value
     query.years = this.yearsSlider.noUiSlider.get();
-    query.loan  = this.sliderInterest.noUiSlider.get();
+    query.loan = this.sliderInterest.noUiSlider.get();
 
-    for (let i = 0; i < query.years.length; i++){
+    for (let i = 0; i < query.years.length; i++) {
       query.years[i] = parseFloat(query.years[i]);
     }
 
-    for (let i = 0; i < query.loan.length; i++){
+    for (let i = 0; i < query.loan.length; i++) {
       query.loan[i] = parseFloat(query.loan[i]);
     }
-
-    this.api.getFetch((data) => {
-      this.chart.chart.data.datasets = data.dataSet;
+    const chart = this.chart;
+    console.log(query);
+    this.api.getFetch(function (data) {
+      chart.chart.data.datasets = data.dataSet;
+      console.log(data);
       // dashboard charts ranges
       // x range
-      this.chart.chart.options.scales.xAxes[0].ticks.suggestedMin = data.minX;
-      this.chart.chart.options.scales.xAxes[0].ticks.suggestedMax = data.maxX;
+      chart.chart.options.scales.xAxes[0].ticks.suggestedMin = data.minX;
+      chart.chart.options.scales.xAxes[0].ticks.suggestedMax = data.maxX;
       // y range
-      this.chart.chart.options.scales.yAxes[0].ticks.suggestedMin = data.minY;
-      this.chart.chart.options.scales.yAxes[0].ticks.suggestedMax = data.maxY;
+      chart.chart.options.scales.yAxes[0].ticks.suggestedMin = data.minY;
+      chart.chart.options.scales.yAxes[0].ticks.suggestedMax = data.maxY;
 
-      this.yearsSlider.noUiSlider.updateOptions({
-        range: {'min': data.minX, 'max': data.maxX},
-      });
-      this.sliderInterest.noUiSlider.updateOptions({
-        range: {'min': data.minY, 'max': data.maxY},
-      });
-      this.chart.chart.clear();
-      this.chart.chart.update();
+      // this.yearsSlider.noUiSlider.updateOptions({
+      //   range: { min: data.minX, max: data.maxX },
+      // });
+      // this.sliderInterest.noUiSlider.updateOptions({
+      //   range: { min: data.minY, max: data.maxY },
+      // });
+      chart.chart.clear();
+      chart.chart.update();
     }, query);
-
   }
 
-  setFilter(wrapper){
-    const container = document.createElement('div');
-    container.classList.add('container', 'text-right');
-    const filterArea = document.createElement('div');
-    filterArea.classList.add('row', 'filter-area');
+  setFilter(wrapper) {
+    const container = document.createElement("div");
+    container.classList.add("container", "text-right");
+    const filterArea = document.createElement("div");
+    filterArea.classList.add("row", "filter-area");
 
-    if (userData.userRole === 'unregistered'){
-      filterArea.addEventListener('click', (evt) => {
-        wpAuthModal.style.display = 'block';
+    if (userData.userRole === "unregistered") {
+      filterArea.addEventListener("click", (evt) => {
+        wpAuthModal.style.display = "block";
       });
     }
 
     // view by column
-    const viewByColumn = document.createElement('div');
-    viewByColumn.classList.add('col-12', 'col-md-4', 'col-lg-2', 'filter-block-interest');
-    const viewByHeader = document.createElement('p');
-    viewByHeader.innerHTML = 'תצוגה לפי';
+    const viewByColumn = document.createElement("div");
+    viewByColumn.classList.add(
+      "col-12",
+      "col-md-4",
+      "col-lg-2",
+      "filter-block-interest"
+    );
+    const viewByHeader = document.createElement("p");
+    viewByHeader.innerHTML = "תצוגה לפי";
     viewByColumn.appendChild(viewByHeader);
-    const viewByRadioUL = document.createElement('ul');
-    viewByRadioUL.classList.add('type-select', 'type-select-col');
+    const viewByRadioUL = document.createElement("ul");
+    viewByRadioUL.classList.add("type-select", "type-select-col");
 
-    [['MonthlyReturnEdge', 'זינוק מקסימלי חזוי בהחזר החודשי'], ['MortgageCostEdges', 'עלות המשכנתה לשקל'], ['PaymentHalvedEdges', 'מתי הקרן תרד במחצית']].forEach((radioData) => {
+    [
+      ["MonthlyReturnEdges", "זינוק מקסימלי חזוי בהחזר החודשי"],
+      ["MortgageCostEdges", "עלות המשכנתה לשקל"],
+      ["PaymentHalvedEdges", "מתי הקרן תרד במחצית"],
+    ].forEach((radioData) => {
       const [radio, labelText] = radioData;
-      const inputClass = radio.concat(primeDashboardCount);
-      const inputHTML = document.createElement('input');
-      inputHTML.setAttribute('type', 'radio');
-      inputHTML.setAttribute('class', inputClass);
+      const inputClass = radio.concat(analyticsDashboardCount);
+      const inputHTML = document.createElement("input");
+      inputHTML.setAttribute("type", "radio");
+      inputHTML.setAttribute("class", inputClass);
 
-      inputHTML.setAttribute('id', inputClass);
+      inputHTML.setAttribute("id", inputClass);
 
-      const inputName = 'mortgageSwitchChart'.concat(primeDashboardCount);
-      inputHTML.setAttribute('name', inputName);
+      const inputName = "mortgageSwitchChart".concat(analyticsDashboardCount);
+      inputHTML.setAttribute("name", inputName);
 
-      const checkDiv = document.createElement('div');
-      checkDiv.classList.add('check');
+      const checkDiv = document.createElement("div");
+      checkDiv.classList.add("check");
 
-      const label = document.createElement('label');
-      label.setAttribute('for', inputClass);
+      const label = document.createElement("label");
+      label.setAttribute("for", inputClass);
       label.innerHTML = labelText;
 
-      const listElement = document.createElement('li');
+      const listElement = document.createElement("li");
 
       listElement.appendChild(inputHTML);
       listElement.appendChild(checkDiv);
       listElement.appendChild(label);
 
-
-      if (userData.userRole === 'unregistered'){
-        inputHTML.setAttribute('disabled', true);
+      if (userData.userRole === "unregistered") {
+        inputHTML.setAttribute("disabled", true);
         inputHTML.disabled = true;
-        checkDiv.classList.add('disabled-radio');
+        checkDiv.classList.add("disabled-radio");
       } else {
-        inputHTML.addEventListener('change', (evt) => {
+        inputHTML.addEventListener("change", (evt) => {
           this.viewType = radio;
           this.update();
         });
@@ -153,85 +154,144 @@ class analyticsDashboard {
       viewByRadioUL.appendChild(listElement);
     });
 
-    viewByRadioUL.children[0].querySelector('input').setAttribute('checked', true);
-    this.viewType = 'MonthlyReturnEdge';
-    primeDashboardCount++;
+    viewByRadioUL.children[0]
+      .querySelector("input")
+      .setAttribute("checked", true);
+    this.viewType = "MonthlyReturnEdges";
+    analyticsDashboardCount++;
 
     viewByColumn.appendChild(viewByRadioUL);
     filterArea.appendChild(viewByColumn);
 
     // years slider
-    const yearsSliderContainer = document.createElement('div');
-    yearsSliderContainer.classList.add('col-12', 'col-md-4', 'col-lg-2', 'filter-block-interest');
-    const yearsSliderHeader = document.createElement('p');
-    yearsSliderHeader.innerHTML = 'משך השנים';
-    this.yearsSlider = document.createElement('div');
-    this.yearsSlider.setAttribute('id', 'sliderYears');
+    const yearsSliderContainer = document.createElement("div");
+    yearsSliderContainer.classList.add(
+      "col-12",
+      "col-md-4",
+      "col-lg-2",
+      "filter-block-interest"
+    );
+    const yearsSliderHeader = document.createElement("p");
+    yearsSliderHeader.innerHTML = "משך השנים";
+    this.yearsSlider = document.createElement("div");
+    this.yearsSlider.setAttribute("id", "sliderYears");
 
     yearsSliderContainer.appendChild(yearsSliderHeader);
     yearsSliderContainer.appendChild(this.yearsSlider);
     filterArea.appendChild(yearsSliderContainer);
 
     // filters
-    const filtersContainer = document.createElement('div');
-    filtersContainer.classList.add('col-12', 'col-md-4', 'col-lg-3', 'filter-block-interest');
-    const filtersHeader = document.createElement('p');
-    filtersHeader.innerHTML = 'יחס הלוואה';
+    const filtersContainer = document.createElement("div");
+    filtersContainer.classList.add(
+      "col-12",
+      "col-md-4",
+      "col-lg-3",
+      "filter-block-interest"
+    );
+    const filtersHeader = document.createElement("p");
+    filtersHeader.innerHTML = "יחס הלוואה";
     filtersContainer.appendChild(filtersHeader);
 
-    const buttonsUL = document.createElement('ul');
-    buttonsUL.classList.add('p-0', 'mb-0');
+    const buttonsUL = document.createElement("ul");
+    buttonsUL.classList.add("p-0", "mb-0");
 
     this.viewByFilters = {};
-    this.data.viewTypeFilters.forEach((viewType, filters) => {
-      const filtersColumns = document.createElement('div');
-      filtersColumns.classList.add('col-12', 'col-md-4', 'col-lg-3', 'filter-block-interest');
-      const filtersHeader = document.createElement('p');
+
+    /*
+      data returned from back example:
+      data = {
+        viewTypeFilters: {
+          MonthlyReturnEdge: {
+            label: "Homebrew text in header",
+            buttons: [
+              label: "homebrew ...",
+              name: "10%",
+            ]
+          },
+          MortgageCostEdges: {...},
+          PaymentHalvedEdges: {...}
+        }
+      }
+    */
+
+    for (const [viewType, filters] of Object.entries(this.data.viewTypeFilters)) {
+      const filtersColumns = document.createElement("div");
+      filtersColumns.classList.add(
+        "col-12",
+        "col-md-4",
+        "col-lg-3",
+        "filter-block-interest"
+      );
+      const filtersHeader = document.createElement("p");
       filtersHeader.innerHTML = filters.label;
-      filtersContainer.appendChild(filtersHeader);
-      const buttonsList = document.createElement('ul');
-      buttonsList.classList.add('p-0', 'mb-0');
+      // filtersContainer.appendChild(filtersHeader);
+      const buttonListContainer = document.createElement("div");
+      const buttonsList = document.createElement("ul");
+      buttonsList.classList.add("p-0", "mb-0");
       this.viewByFilters[viewType] = {};
 
       filters.buttons.forEach((button) => {
-        const buttonLI = document.createElement('li');
-        buttonLI.classList.add('d-inline-block', 'mb-1');
-        const span = document.createElement('span');
-        span.classList.add('badge', 'badge-secondary', 'chip', 'ml-1', 'chip-selected');
+        const buttonLI = document.createElement("li");
+        buttonLI.classList.add("d-inline-block", "mb-1");
+        const span = document.createElement("span");
+        span.classList.add(
+          "badge",
+          "badge-secondary",
+          "chip",
+          "ml-1",
+          "chip-selected"
+        );
         span.innerHTML = button.label;
         buttonLI.appendChild(span);
         buttonsList.appendChild(buttonLI);
-        
+
         this.viewByFilters[viewType][button.name] = {
           spanNode: span,
           activated: true,
         };
 
-        if (userData.userRole === 'unregistered'){
-          span.setAttribute('disabled', true);
-          span.classList.remove('chip-selected');
-          span.classList.add('disabled');
+        if (userData.userRole === "unregistered") {
+          span.setAttribute("disabled", true);
+          span.classList.remove("chip-selected");
+          span.classList.add("disabled");
         } else {
-          span.addEventListener('click', (evt) => {
-            this.viewByFilters[viewType][button.name].activated = !this.viewByFilters[viewType][button.name].activated;
-            span.classList.toggle('chip-selected');
+          span.addEventListener("click", (evt) => {
+            this.viewByFilters[viewType][button.name].activated = !this
+              .viewByFilters[viewType][button.name].activated;
+            span.classList.toggle("chip-selected");
             this.update();
           });
         }
-        buttonsList.setAttribute('hidden', true);
-        filtersContainer.appendChild(buttonsList);
-      })
-    })
-    
-    filterArea.appendChild(loanFilterContainer);
+        buttonListContainer.setAttribute("hidden", true);
+        buttonListContainer.appendChild(filtersHeader);
+        buttonListContainer.appendChild(buttonsList);
+        filtersContainer.appendChild(buttonListContainer);
+      });
+    }
+
+    filterArea.appendChild(filtersContainer);
+
+    const span = this.viewByFilters[this.viewType][1].spanNode;
+    span.parentNode.parentNode.parentNode.removeAttribute("hidden");
+
+    // const span = this.viewByFilters[this.viewType];
+    // for (let key in span) {
+    //     console.log(span[key].spanNode);
+    // }
+   
 
     // Interest slider
-    const sliderInterestContainer = document.createElement('div');
-    sliderInterestContainer.classList.add('col-12', 'col-md-6', 'col-lg-2', 'filter-block-interest');
-    const sliderInterestHeader = document.createElement('p');
-    sliderInterestHeader.innerHTML = 'ריבית שנתית';
-    this.sliderInterest = document.createElement('div');
-    this.sliderInterest.setAttribute('id', 'sliderInterest');
+    const sliderInterestContainer = document.createElement("div");
+    sliderInterestContainer.classList.add(
+      "col-12",
+      "col-md-6",
+      "col-lg-2",
+      "filter-block-interest"
+    );
+    const sliderInterestHeader = document.createElement("p");
+    sliderInterestHeader.innerHTML = "ריבית שנתית";
+    this.sliderInterest = document.createElement("div");
+    this.sliderInterest.setAttribute("id", "sliderInterest");
 
     sliderInterestContainer.appendChild(sliderInterestHeader);
     sliderInterestContainer.appendChild(this.sliderInterest);
@@ -244,34 +304,39 @@ class analyticsDashboard {
     });
 
     [this.yearsSlider, this.sliderInterest].forEach((slider) => {
-      if (userData.userRole === 'unregistered'){
-        slider.setAttribute('disabled', true);
+      if (userData.userRole === "unregistered") {
+        slider.setAttribute("disabled", true);
         slider.disabled = true;
         slider.noUiSlider.disabled = true;
       } else {
-        slider.noUiSlider.on('end', (values, handle, unencoded, tap, positions, noUiSlider) => {
-          this.update();
-        });
+        slider.noUiSlider.on(
+          "end",
+          (values, handle, unencoded, tap, positions, noUiSlider) => {
+            this.update();
+          }
+        );
       }
     });
 
     wrapper.appendChild(container);
     const resetButton = createResetBtn();
-    const resetBtnHTML = resetButton.querySelector('.reload-page-btn');
+    const resetBtnHTML = resetButton.querySelector(".reload-page-btn");
 
-    if(userData.userRole === 'unregistered'){
-      resetBtnHTML.classList.add('disabled-button');
-      resetBtnHTML.addEventListener('click', (evt) => {
-        wpAuthModal.style.display = 'block';
-      })
+    if (userData.userRole === "unregistered") {
+      resetBtnHTML.classList.add("disabled-button");
+      resetBtnHTML.addEventListener("click", (evt) => {
+        wpAuthModal.style.display = "block";
+      });
     } else {
-      resetBtnHTML.addEventListener('click', (evt) => {
+      resetBtnHTML.addEventListener("click", (evt) => {
         this.yearsSlider.noUiSlider.set([this.data.minX, this.data.maxX]);
         this.sliderInterest.noUiSlider.set([this.data.minY, this.data.maxY]);
         Object.keys(this.viewByFilters).map((viewType) => {
           Object.keys(this.viewByFilters[viewType]).map((buttonName) => {
             this.viewByFilters[viewType][buttonName].activated = true;
-            this.viewByFilters[viewType][buttonName].spanNode.classList.add('chip-selected');
+            this.viewByFilters[viewType][buttonName].spanNode.classList.add(
+              "chip-selected"
+            );
           });
         });
 
@@ -282,4 +347,4 @@ class analyticsDashboard {
     wrapper.appendChild(resetButton);
     return resetButton;
   }
-};
+}

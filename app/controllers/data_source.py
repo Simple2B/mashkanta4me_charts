@@ -16,6 +16,8 @@ DATASET_MAP_JSON = {
     "variable_wo": "VARIABLE_WO_CPI.csv",
 }
 
+ANALYTICS = "analytics"
+
 DATA_DIR_NAME = "data"
 EXCEL_FILES_DIR_NAME = "excel_files"
 
@@ -122,6 +124,24 @@ def get_prime_data_ltv_view(file_data: dict, options: dict = {}):
     return data
 
 
+def get_color(index):
+    import random
+
+    colors = [
+        "rgba(255, 203, 25, 1)",
+        "rgba(255, 167, 25, 1)",
+        "rgba(52, 216, 153, 1)",
+        "rgba(16, 163, 255, 1)",
+        "rgba(255, 107, 101, 1)",
+        "rgba(121, 52, 216, 1)",
+        "rgba(216, 52, 121, 1)",
+        "rgba(168, 25, 177, 1)",
+    ]
+    if index >= len(colors):
+        return f"rgba({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)}, 1)"
+    return colors[index]
+
+
 @data_processor("prime", bank_view=True)
 @data_processor("const_w", bank_view=True)
 @data_processor("const_wo", bank_view=True)
@@ -146,23 +166,6 @@ def get_prime_data_bank_view(file_data: dict, options: dict = {}):
     ltv_indexes = [LTV_INDEXES[ltv] for ltv in ltvs]
     ltvs_all = [int(ltv) for ltv in file_data["LTV"]]
     loan_numbers = [n for n in file_data["loan_number"]]
-
-    def get_color(index):
-        import random
-
-        colors = [
-            "rgba(255, 203, 25, 1)",
-            "rgba(255, 167, 25, 1)",
-            "rgba(52, 216, 153, 1)",
-            "rgba(16, 163, 255, 1)",
-            "rgba(255, 107, 101, 1)",
-            "rgba(121, 52, 216, 1)",
-            "rgba(216, 52, 121, 1)",
-            "rgba(168, 25, 177, 1)",
-        ]
-        if index >= len(colors):
-            return f"rgba({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)}, 1)"
-        return colors[index]
 
     def get_bank_data(bank_name):
         idx = [
@@ -238,19 +241,137 @@ class ChartDataSource(object):
                         data[k] += [v]
         return data
 
+    def get_csv_file_data(self, file_name: str) -> dict:
+        try:
+            return self._basic_chart_data(pathlib.Path(EXCEL_FILES_DIR) / file_name)
+        except UnicodeDecodeError:
+            return self._basic_chart_data(
+                pathlib.Path(EXCEL_FILES_DIR) / file_name, encoding="utf-8"
+            )
+
     def chart_data(self, chart_name: str, options: dict = {}) -> dict:
+        if chart_name == ANALYTICS:
+            return self.analytics_data(options)
         if chart_name not in DATASET_MAP_JSON:
             log(log.WARNING, "Asked unknown chart_name: [%s]", chart_name)
             return {}
         bank_view = options["bankView"] if "bankView" in options else False
         file_name = DATASET_MAP_JSON[chart_name]
-        try:
-            data = self._basic_chart_data(pathlib.Path(EXCEL_FILES_DIR) / file_name)
-        except UnicodeDecodeError:
-            data = self._basic_chart_data(
-                pathlib.Path(EXCEL_FILES_DIR) / file_name, encoding="utf-8"
-            )
+        data = self.get_csv_file_data(file_name)
         if chart_name in DATA_PROCESSOR:
             return DATA_PROCESSOR[chart_name][bank_view](data, options)
 
+        return data
+
+    def analytics_data(self, options: dict = {}) -> dict:
+        monthly_return_edges = [
+            round(float(i), 2)
+            for i in self.get_csv_file_data("monthly_return_edges.csv")
+        ]
+        mortgage_cost_edges = [
+            round(float(i), 2)
+            for i in self.get_csv_file_data("mortgage_cost_edges.csv")
+        ]
+        payment_halved_edges = [
+            round(float(i))
+            for i in self.get_csv_file_data("payment_halved_edges.csv")
+        ]
+        data = {
+            "viewTypeFilters": {
+                "MonthlyReturnEdges": {
+                    "label": "זינוק מקסימלי חזוי בהחזר החודשי",
+                    "buttons": [
+                        {
+                            "label": f"{monthly_return_edges[i]}% עד",
+                            "name": i + 1,
+                        }
+                        for i in range(len(monthly_return_edges))
+                    ],
+                },
+                "MortgageCostEdges": {
+                    "label": "עלות לשקל בודד [ש״ח]",
+                    "buttons": [
+                        {"label": f"{v} עד", "name": i}
+                        for i, v in enumerate(mortgage_cost_edges)
+                        if v > 0
+                    ],
+                },
+                "PaymentHalvedEdges": {
+                    "label": "מתי הקרן תרד במחצית - כתלות בגודלה ובהחזר החודשי (הראשוני)",
+                    "buttons": [
+                        {
+                            "label": f"בין {payment_halved_edges[i-1]} ל- {s} שנים",
+                            "name": i,
+                        }
+                        if i > 1
+                        else {
+                            "label": f"עד {s} שנים",
+                            "name": i,
+                        }
+                        for i, s in enumerate(payment_halved_edges)
+                        if i > 0
+                    ],
+                },
+            }
+        }
+        s = monthly_return_edges[-1]
+        data["viewTypeFilters"]["MonthlyReturnEdges"]["buttons"] += [
+            {"label": f"{s}% מעל", "name": 1 + len(monthly_return_edges)}
+        ]
+        s = mortgage_cost_edges[-1]
+        data["viewTypeFilters"]["MortgageCostEdges"]["buttons"] += [
+            {"label": f"{s} מעל", "name": len(mortgage_cost_edges)}
+        ]
+        s = payment_halved_edges[-1]
+        data["viewTypeFilters"]["PaymentHalvedEdges"]["buttons"] += [
+            {"label": f"מעל {s} שנים", "name": len(payment_halved_edges)}
+        ]
+
+        if "viewType" in options:
+            view_type = options["viewType"]
+            # get data by view_type:
+            DATA_FILE = {
+                "MonthlyReturnEdges": "change_in_monthly_return_as_function_of_first_payment.csv",
+                "MortgageCostEdges": "loan_cost_as_function_of_monthly_payment.csv",
+                "PaymentHalvedEdges": "Principal_halved_function_of_monthly_payment.csv",
+            }
+            src = self.get_csv_file_data(DATA_FILE[view_type])
+            mortgage_sizes = [
+                int(mortgage_size) for mortgage_size in src["mortgage_size"]
+            ]
+            monthly_payments = [
+                float(monthly_payment) for monthly_payment in src["monthly_payment"]
+            ]
+            max_x = max(mortgage_sizes)
+            min_x = min(mortgage_sizes)
+            max_y = max(monthly_payments)
+            min_y = min(monthly_payments)
+            filters = [int(i) for i in options["filters"]] if "filters" in options else []
+            value_name = "danger" if view_type != "PaymentHalvedEdges" else "Time"
+            indexes = [i for i, v in enumerate(src[value_name]) if int(v) in filters]
+            dangers = [int(danger) for danger in src[value_name]]
+            data.update({
+                # "banks": all_banks,
+                "maxX": max_x,
+                "minX": min_x,
+                "maxY": max_y,
+                "minY": min_y,
+
+                "dataSet": [
+                    {
+                        "pointRadius": 7,
+                        "backgroundColor": get_color(filter),
+                        "label": data["viewTypeFilters"][view_type]["buttons"][filter-1]["label"],
+                        "data": [
+                            {
+                                "danger": danger,
+                                "x": mortgage_sizes[i],
+                                "y": monthly_payments[i],
+                            }
+                            for i, danger in enumerate(dangers) if int(danger) == filter
+                        ]
+                    }
+                    for filter in filters
+                ],
+            })
         return data
