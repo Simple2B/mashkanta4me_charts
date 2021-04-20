@@ -65,6 +65,7 @@ class AnalyticsDashboard {
     console.log(query);
     this.api.getFetch(function (data) {
       chart.chart.data.datasets = data.dataSet;
+      console.log(data);
       // dashboard charts ranges
       // x range
       chart.chart.options.scales.xAxes[0].ticks.suggestedMin = data.minX;
@@ -269,8 +270,15 @@ class AnalyticsDashboard {
     }
 
     filterArea.appendChild(filtersContainer);
-    const span = this.viewByFilters[this.viewType]['~`spanNode'];
-    console.log(span);
+
+    const span = this.viewByFilters[this.viewType][1].spanNode;
+    span.parentNode.parentNode.parentNode.removeAttribute("hidden");
+
+    // const span = this.viewByFilters[this.viewType];
+    // for (let key in span) {
+    //     console.log(span[key].spanNode);
+    // }
+   
 
     // Interest slider
     const sliderInterestContainer = document.createElement("div");

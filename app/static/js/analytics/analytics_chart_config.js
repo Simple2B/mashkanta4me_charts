@@ -102,7 +102,7 @@ function createAnalyticsChartConfig() {
   };
 
   if (userData.userRole === "registered") {
-    primeChartConfig.options.tooltips = {
+    analyticsChartConfig.options.tooltips = {
       mode: "single",
       enabled: true,
       callbacks: {
@@ -124,7 +124,7 @@ function createAnalyticsChartConfig() {
       },
     };
   } else if (userData.userRole === "paid") {
-    primeChartConfig.options.tooltips = {
+    analyticsChartConfig.options.tooltips = {
       mode: "single",
       enabled: true,
       callbacks: {
