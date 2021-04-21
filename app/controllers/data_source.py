@@ -273,8 +273,7 @@ class ChartDataSource(object):
             for i in self.get_csv_file_data("mortgage_cost_edges.csv")
         ]
         payment_halved_edges = [
-            round(float(i))
-            for i in self.get_csv_file_data("payment_halved_edges.csv")
+            round(float(i)) for i in self.get_csv_file_data("payment_halved_edges.csv")
         ]
         data = {
             "viewTypeFilters": {
@@ -329,6 +328,9 @@ class ChartDataSource(object):
 
         if "viewType" in options:
             view_type = options["viewType"]
+            x_range = options["x"] if "x" in options else [0, 1000000000]
+            y_range = options["y"] if "y" in options else [0, 1000000000]
+
             # get data by view_type:
             DATA_FILE = {
                 "MonthlyReturnEdges": "change_in_monthly_return_as_function_of_first_payment.csv",
@@ -346,32 +348,49 @@ class ChartDataSource(object):
             min_x = min(mortgage_sizes)
             max_y = max(monthly_payments)
             min_y = min(monthly_payments)
-            filters = [int(i) for i in options["filters"]] if "filters" in options else []
+            filters = (
+                [int(i) for i in options["filters"]] if "filters" in options else []
+            )
             value_name = "danger" if view_type != "PaymentHalvedEdges" else "Time"
             indexes = [i for i, v in enumerate(src[value_name]) if int(v) in filters]
-            dangers = [int(danger) for danger in src[value_name]]
-            data.update({
-                # "banks": all_banks,
-                "maxX": max_x,
-                "minX": min_x,
-                "maxY": max_y,
-                "minY": min_y,
-
-                "dataSet": [
-                    {
-                        "pointRadius": 7,
-                        "backgroundColor": get_color(filter),
-                        "label": data["viewTypeFilters"][view_type]["buttons"][filter-1]["label"],
-                        "data": [
-                            {
-                                "danger": danger,
-                                "x": mortgage_sizes[i],
-                                "y": monthly_payments[i],
-                            }
-                            for i, danger in enumerate(dangers) if int(danger) == filter
-                        ]
-                    }
-                    for filter in filters
-                ],
-            })
+            indexes = [
+                i
+                for i in indexes
+                if x_range[0] <= float(src["mortgage_size"][i]) <= x_range[1]
+            ]
+            indexes = [
+                i
+                for i in indexes
+                if y_range[0] <= float(src["monthly_payment"][i]) <= y_range[1]
+            ]
+            num_of_colors = len(data["viewTypeFilters"][view_type]["buttons"])
+            colors = [get_color(i) for i in range(num_of_colors)]
+            data.update(
+                {
+                    # "banks": all_banks,
+                    "maxX": max_x,
+                    "minX": min_x,
+                    "maxY": max_y,
+                    "minY": min_y,
+                    "dataSet": [
+                        {
+                            "pointRadius": 7,
+                            "backgroundColor": colors[filter - 1],
+                            "label": data["viewTypeFilters"][view_type]["buttons"][
+                                filter - 1
+                            ]["label"],
+                            "data": [
+                                {
+                                    "danger": int(src[value_name][i]),
+                                    "x": mortgage_sizes[i],
+                                    "y": monthly_payments[i],
+                                    "loan_number": int(src["loan_number"][i]),
+                                }
+                                for i in indexes
+                            ],
+                        }
+                        for filter in filters
+                    ],
+                }
+            )
         return data

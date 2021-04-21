@@ -19,7 +19,7 @@ class AnalyticsDashboard {
     };
 
     this.data = data;
-    console.log(data)
+    console.log(data);
     const wrapper = document.querySelector(containerSelector);
 
     if (userData.userRole === "unregistered") {
@@ -50,40 +50,47 @@ class AnalyticsDashboard {
         query.filters.push(buttonName);
         //console.log(query.filters);
       }
-    })
-    console.log(this)
+    });
+    console.log(this);
     // get sliders value
-    query.years = this.amountMortgage.noUiSlider.get();
-    query.loan = this.monthlyPayments.noUiSlider.get();
+    query.x = this.amountMortgage.noUiSlider.get();
+    query.y = this.monthlyPayments.noUiSlider.get();
 
-    for (let i = 0; i < query.years.length; i++) {
-      query.years[i] = parseFloat(query.years[i]);
+    for (let i = 0; i < query.x.length; i++) {
+      query.x[i] = parseFloat(query.x[i]);
     }
 
-    for (let i = 0; i < query.loan.length; i++) {
-      query.loan[i] = parseFloat(query.loan[i]);
+    for (let i = 0; i < query.y.length; i++) {
+      query.y[i] = parseFloat(query.y[i]);
     }
+
     const chart = this.chart;
     const monthlyPayments = this.monthlyPayments;
     const amountMortgage = this.amountMortgage;
 
-    // add id for containers filters by radio buttons 
+    // add id for containers filters by radio buttons
 
-    const buttonsListContainer = document.getElementsByClassName('buttonListContainer');
+    const buttonsListContainer = document.getElementsByClassName(
+      "buttonListContainer"
+    );
     const arrButtons = Array.from(buttonsListContainer);
-    const idForContainer = ["MonthlyReturnEdges", "MortgageCostEdges", "PaymentHalvedEdges"];
-                
+    const idForContainer = [
+      "MonthlyReturnEdges",
+      "MortgageCostEdges",
+      "PaymentHalvedEdges",
+    ];
+
     arrButtons.forEach((b, i) => {
-        idForContainer.map((idContainer, j) => {
-            if(i === j) {
-              b.id = idContainer;
-            }
-          })
-        })
+      idForContainer.map((idContainer, j) => {
+        if (i === j) {
+          b.id = idContainer;
+        }
+      });
+    });
 
     this.api.getFetch(function (data) {
       chart.chart.data.datasets = data.dataSet;
-      console.log(data)
+      console.log(data);
       // dashboard charts ranges
       // x range
       chart.chart.options.scales.xAxes[0].ticks.suggestedMin = data.minX;
@@ -112,7 +119,6 @@ class AnalyticsDashboard {
 
     if (userData.userRole === "unregistered") {
       filterArea.addEventListener("click", (evt) => {
-        
         wpAuthModal.style.display = "block";
       });
     }
@@ -161,8 +167,10 @@ class AnalyticsDashboard {
       listElement.appendChild(checkDiv);
       listElement.appendChild(label);
 
-      const buttonsListContainer = document.getElementsByClassName('buttonListContainer');
-      
+      const buttonsListContainer = document.getElementsByClassName(
+        "buttonListContainer"
+      );
+
       if (userData.userRole === "unregistered") {
         inputHTML.setAttribute("disabled", true);
         inputHTML.disabled = true;
@@ -172,16 +180,16 @@ class AnalyticsDashboard {
           this.viewType = radio;
           //console.log(radio)
           const arrButtonsList = [...buttonsListContainer];
-          arrButtonsList.map(container => {
+          arrButtonsList.map((container) => {
             //console.log(container)
 
             if (radio === container.id) {
-              container.removeAttribute('hidden')
+              container.removeAttribute("hidden");
             }
             if (radio !== container.id) {
-              container.setAttribute('hidden', true)
+              container.setAttribute("hidden", true);
             }
-          })
+          });
 
           this.update();
         });
@@ -251,8 +259,9 @@ class AnalyticsDashboard {
       }
     */
 
-    for (const [viewType, filters] of Object.entries(this.data.viewTypeFilters)) {
-
+    for (const [viewType, filters] of Object.entries(
+      this.data.viewTypeFilters
+    )) {
       const filtersColumns = document.createElement("div");
       filtersColumns.classList.add(
         "col-12",
@@ -263,7 +272,7 @@ class AnalyticsDashboard {
       const filtersHeader = document.createElement("p");
       filtersHeader.innerHTML = filters.label;
       const buttonListContainer = document.createElement("div");
-      buttonListContainer.classList.add('buttonListContainer');
+      buttonListContainer.classList.add("buttonListContainer");
       const buttonsList = document.createElement("ul");
       buttonsList.classList.add("p-0", "mb-0");
       this.viewByFilters[viewType] = {};
@@ -294,7 +303,8 @@ class AnalyticsDashboard {
           span.classList.add("disabled");
         } else {
           span.addEventListener("click", (evt) => {
-            this.viewByFilters[viewType][button.name].activated = !this.viewByFilters[viewType][button.name].activated;
+            this.viewByFilters[viewType][button.name].activated = !this
+              .viewByFilters[viewType][button.name].activated;
             span.classList.toggle("chip-selected");
             this.update();
           });
