@@ -197,6 +197,7 @@ class PrimeDashboard {
         span.classList.add('disabled');
       } else {
         span.addEventListener('click', (evt) => {
+          console.log('click')
           this.ltvStatus[spanId] = !this.ltvStatus[spanId];
           span.classList.toggle('chip-selected');
           this.update();
