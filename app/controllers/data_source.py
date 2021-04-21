@@ -386,7 +386,7 @@ class ChartDataSource(object):
                                     "y": monthly_payments[i],
                                     "loan_number": int(src["loan_number"][i]),
                                 }
-                                for i in indexes
+                                for i in indexes if int(src[value_name][i]) == filter
                             ],
                         }
                         for filter in filters
