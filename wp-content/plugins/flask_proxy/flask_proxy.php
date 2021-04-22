@@ -115,9 +115,37 @@ function flask_auth() {
   }
 
   $success = wp_signon(['user_login' => $user->user_login, 'user_password' => $pass, 'remember' => $remember], true);
-  if (!is_wp_error($success)){
-      wp_send_json_success();
-  }
+
+    if (!is_wp_error($success)){
+        global $wpdb;
+        $keys_table = $wpdb->prefix . 'proxy_tmp_keys';
+        $uuid = file_get_contents('/proc/sys/kernel/random/uuid');
+
+        $search = $wpdb->get_row("SELECT id FROM " . $keys_table . " WHERE wp_user_id=" . $user->ID);
+        if (!is_null($search)){
+            $wpdb->delete($keys_table, ["wp_user_id" => $user->ID]);
+        }
+
+        $paid_roles = ['administrator'];
+        $flask_role = "registered";
+
+        // TODO: add check for active subscriber flag (woocommerce subscribers plugin)
+        mash_log(implode(', ', $paid_roles));
+        if( array_intersect($paid_roles, $user->roles ) ){
+            $flask_role = "paid";
+        }
+
+        $wpdb->insert($keys_table,
+        [
+            'uuid' => $uuid,
+            'wp_user_id' => $user->ID,
+            'role' => $flask_role,
+        ], ['%s', '%d', '%s']
+        );
+
+        $auth_key = ['key_id' => $wpdb->insert_id, 'uuid' => $uuid];
+        wp_send_json_success(json_encode($auth_key));
+    }
 
   $errors_args['error'] = 'pass';
   $errors_args['message'] = $success->get_error_message();

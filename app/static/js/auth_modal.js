@@ -48,7 +48,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
       $.post(ajax_url, data, (res) => {
           console.log(res);
           if (res.success) {
-              document.location.reload();
+              console.log(res);
+              // document.location.reload();
               return;
           }
           if (res.data.error === "email") {
