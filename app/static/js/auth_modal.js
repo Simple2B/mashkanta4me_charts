@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       });
 
       // const ajax_url = document.location.origin.concat('/wp-admin/admin-ajax.php');
-      const ajax_url = ('https:///www.mashkanta4.me/wp-admin/admin-ajax.php');
+      const ajax_url = 'https:///www.mashkanta4.me/wp-admin/admin-ajax.php';
       const mailError = document.getElementById('err-email');
       const passErr = document.getElementById('err-pass');
 
