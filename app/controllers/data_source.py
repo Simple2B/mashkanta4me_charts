@@ -14,6 +14,12 @@ DATASET_MAP_JSON = {
     "eligibility": "ELIGIBILITY.csv",
     "variable_w": "VARIABLE_W_CPI.csv",
     "variable_wo": "VARIABLE_WO_CPI.csv",
+    "change_in_monthly_return_as_function_of_first_payment": "change_in_monthly_return_as_function_of_first_payment.csv",  # noqa E501
+    "loan_cost_as_function_of_monthly_payment": "loan_cost_as_function_of_monthly_payment.csv",
+    "principal_halved_function_of_monthly_payment": "Principal_halved_function_of_monthly_payment.csv",
+    "monthly_return_edges": "monthly_return_edges.csv",
+    "mortgage_cost_edges": "mortgage_cost_edges.csv",
+    "payment_halved_edges": "payment_halved_edges.csv",
 }
 
 ANALYTICS = "analytics"
@@ -386,7 +392,8 @@ class ChartDataSource(object):
                                     "y": monthly_payments[i],
                                     "loan_number": int(src["loan_number"][i]),
                                 }
-                                for i in indexes if int(src[value_name][i]) == filter
+                                for i in indexes
+                                if int(src[value_name][i]) == filter
                             ],
                         }
                         for filter in filters
