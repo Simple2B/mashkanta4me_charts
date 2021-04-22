@@ -2,7 +2,6 @@ from flask import (
     Blueprint,
     render_template,
     url_for,
-    request,
     redirect,
     Response,
     abort,
@@ -65,21 +64,17 @@ def prime_dashboard6():
 
 @bp_index.route("/admin", methods=["GET"])
 def admin():
-    password_error_message = request.args.get("password_error_message")
-    if password_error_message is None:
-        password_error_message = ""
-    return render_template(
-        "admin_login.html", password_error_message=password_error_message
-    )
+    return redirect(url_for('index.update_data_route'))
 
 
 @bp_index.route("/update_data", methods=["POST", "GET"])
 @login_required
 def update_data_route():
-    if current_user.role == "administrator":
+    if current_user.role == "paid":
         data_source = ChartDataSource()
         data_source.update()
-        return render_template("update_data_success.html")
+        urlDataUpdate = data_source.update()
+        return render_template("update_data_success.html", urlDataUpdate=urlDataUpdate)
     abort(Response("Access denied"))
 
 

@@ -17,9 +17,13 @@
 
 </head>
 <body>
-<div class="jumbotron m-5">
+<div class="jumbotron m-5 modalContainer">
   <h1 class="display-4">Update data</h1>
   <p class="lead">Eyal, the plots data on the server was updated :)</p>
+  <div class="headerList">List of updates:</div>
+  {% for url in urlDataUpdate%}
+  <div class="containerUrl">- {{ url }};</div>
+  {% endfor %}
 </div>
 </body>
 </html>

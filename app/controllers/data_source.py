@@ -222,12 +222,16 @@ class ChartDataSource(object):
 
     def update(self) -> None:
         log(log.INFO, "Update file from [%s]", conf.STATISTICS_DATABASE_URL)
+        data = []
         for file_name in DATASET_MAP_JSON.values():
             url = urllib.parse.urljoin(conf.STATISTICS_DATABASE_URL, file_name)
             log(log.INFO, "Download [%s] from [%s]", file_name, url)
             res = requests.get(url)
+            # data = DATASET_MAP_JSON.values()
+            data.append(url)
             with open(pathlib.Path(EXCEL_FILES_DIR) / file_name, "wb") as f:
                 f.write(res.content)
+        return data
 
     @property
     def charts(self):
