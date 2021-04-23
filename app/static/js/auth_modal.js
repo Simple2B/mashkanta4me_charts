@@ -40,16 +40,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
           },
       });
 
-      // const ajax_url = document.location.origin.concat('/wp-admin/admin-ajax.php');
-      const ajax_url = 'https:///www.mashkanta4.me/wp-admin/admin-ajax.php';
+      const ajax_url = document.location.origin.concat('/wp-admin/admin-ajax.php');
+      // const ajax_url = 'https:///www.mashkanta4.me/wp-admin/admin-ajax.php';
       const mailError = document.getElementById('err-email');
       const passErr = document.getElementById('err-pass');
 
       $.post(ajax_url, data, (res) => {
           console.log(res);
           if (res.success) {
-              console.log(res);
-              // document.location.reload();
+              document.cookie = encodeURIComponent('wp_auth') + '=' + encodeURIComponent(JSON.stringify(res.data))
+              document.location.reload();
               return;
           }
           if (res.data.error === "email") {
