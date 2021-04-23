@@ -23,21 +23,37 @@
     /* position: relative; */
 }
 
+.modal-wrap svg {
+  width: 100%;
+}
+
 @media (max-width: 544px) {
     .modal-wrap {
         margin: 40px auto;
     }
+
     .sign-in-popup {
         border-radius: 8px;
         background-color: #fff;
         position: relative;
     }
+
     .modal-wrap {
-        max-width: 570px;
+        max-width: 520px;
         margin: 60px auto;
         text-align: center;
         position: relative;
     }
+
+    .modal-wrap svg {
+      margin: 0 auto;
+    }
+}
+
+@media (max-width: 414px) {
+  .modal-wrap {
+    max-width: 315px
+  }
 }
 
 .sign-in-popup .modal-image-wrap {
@@ -52,8 +68,6 @@
 @media (max-width: 544px) {
     .sign-in-popup .modal-image-wrap {
         padding: 15px 35px;
-    }
-    .sign-in-popup .modal-image-wrap {
         border-bottom: 2px solid #c1d3e5;
     }
 }
