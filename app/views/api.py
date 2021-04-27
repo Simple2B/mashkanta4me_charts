@@ -29,8 +29,8 @@ def get_wp_auth_role(key_id, uuid):
     return None
 
 
-@bp_api.route("/auth/proxy_key")
-def auth_by_proxy_key(method=["POST"]):
+@bp_api.route("/auth/proxy_key", methods=["POST"])
+def auth_by_proxy_key():
     proxy_key = request.json()
     role = get_wp_auth_role(proxy_key["key_id"], proxy_key["uuid"])
 
