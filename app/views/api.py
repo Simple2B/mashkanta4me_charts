@@ -2,12 +2,11 @@ import json
 from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_user
 from app.controllers import ChartDataSource
-from app.models import WpAuthKey
-from app.models import User
 from app import db
+from app.models import WpAuthKey, User
+
 
 bp_api = Blueprint('api', __name__)
-
 
 @bp_api.route("/data/<string:chart_name>")
 def get_chart_data(chart_name: str):
