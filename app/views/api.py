@@ -1,8 +1,9 @@
 import json
 from flask import Blueprint, jsonify, request
 from flask_login import current_user
+from app import db
 from app.controllers import ChartDataSource
-from app.models import WpAuthKey
+from app.models import WpAuthKey, User
 
 bp_api = Blueprint('api', __name__)
 
