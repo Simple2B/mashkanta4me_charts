@@ -31,16 +31,18 @@ def get_wp_auth_role(key_id, uuid):
 
 @bp_api.route("/auth/proxy_key", methods=["POST"])
 def auth_by_proxy_key():
-    proxy_key = request.json()
+    proxy_key = request.json
     role = get_wp_auth_role(proxy_key["key_id"], proxy_key["uuid"])
 
-    if current_user.is_authenticated:
-        user = User.query.get(int(current_user.get_id()))
-        user.save()
+    if role:
+        if current_user.is_authenticated:
+            user = User.query.get(int(current_user.get_id()))
+            user.role = role
+            user.save()
 
-    else:
-        user = User(role=role)
-        user.save()
-        login_user(user)
+        else:
+            user = User(role=role)
+            user.save()
+            login_user(user)
 
     return jsonify({"error": False, "msg": "new role is set"})
