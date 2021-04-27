@@ -61,16 +61,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 console.log(data);
               });
           }
-          if (res.data.error === "email") {
-
-              mailError.innerHTML = res.data.message;
-              passErr.innerHTML = " ";
-
-          } else {
-
-              passErr.innerHTML = res.data.message;
-              mailError.innerHTML = " ";
-          }
       })
 
       return false;

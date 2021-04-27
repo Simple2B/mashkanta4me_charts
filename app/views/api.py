@@ -1,8 +1,10 @@
 import json
 from flask import Blueprint, jsonify, request
-from flask_login import current_user
+from flask_login import current_user, login_user
 from app.controllers import ChartDataSource
 from app.models import WpAuthKey
+from app.models import User
+from app import db
 
 bp_api = Blueprint('api', __name__)
 
@@ -38,7 +40,7 @@ def auth_by_proxy_key(method=["POST"]):
         user.save()
 
     else:
-        user = User(role=new_role)
+        user = User(role=role)
         user.save()
         login_user(user)
 
