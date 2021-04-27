@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
                   },
                   body: JSON.stringify(res.data),
               }).then((resp) => {return resp.json()}).then((data) => {
-                console.log(data);
+                window.top.postMessage('reload', "*");
               });
           }
       })
