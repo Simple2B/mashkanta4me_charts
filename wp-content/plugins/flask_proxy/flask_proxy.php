@@ -75,10 +75,6 @@ function write_flask_key($user_login, $user) {
     setcookie('wp_auth', create_auth_key($user), time() + (10 * 365 * 24 * 60 * 60), "/");
 }
 
-function remove_role(){
-    
-}
-
 function flask_auth() {
   header('Content-Type: application/json');
   // check if POST data valid
@@ -131,10 +127,8 @@ function flask_auth() {
 add_action('wp_login', 'write_flask_key', 10, 2);
 add_action('wp_ajax_flask_auth', 'flask_auth', 0);
 add_action('wp_ajax_nopriv_flask_auth', 'flask_auth');
-add_action( 'wp_logout', 'remove_role' );
 
 add_filter('allowed_http_origins', 'add_allowed_origins');
-
 
 function add_allowed_origins($origins) {
     $origins[] = '*';
