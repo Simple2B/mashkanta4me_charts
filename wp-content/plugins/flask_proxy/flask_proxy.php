@@ -55,9 +55,7 @@ function create_tmp_key_table(){
       id BIGINT(20) NOT NULL AUTO_INCREMENT,
       creation_time datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
       uuid VARCHAR(" . UUID_LENGTH . ") NOT NULL,
-      wp_user_id BIGINT(20) UNSIGNED NOT NULL,
       role VARCHAR(255),
-      FOREIGN KEY  (wp_user_id) REFERENCES " . $wp_users_table . "(ID),
       PRIMARY KEY  (id)
     ) " . $charset_collate;
 
@@ -75,6 +73,10 @@ function create_tmp_key_table(){
 
 function write_flask_key($user_login, $user) {
     setcookie('wp_auth', create_auth_key($user), time() + (10 * 365 * 24 * 60 * 60), "/");
+}
+
+function remove_role(){
+    
 }
 
 function flask_auth() {
@@ -129,8 +131,10 @@ function flask_auth() {
 add_action('wp_login', 'write_flask_key', 10, 2);
 add_action('wp_ajax_flask_auth', 'flask_auth', 0);
 add_action('wp_ajax_nopriv_flask_auth', 'flask_auth');
+add_action( 'wp_logout', 'remove_role' );
 
 add_filter('allowed_http_origins', 'add_allowed_origins');
+
 
 function add_allowed_origins($origins) {
     $origins[] = '*';

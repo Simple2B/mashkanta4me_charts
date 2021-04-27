@@ -48,9 +48,18 @@ document.addEventListener("DOMContentLoaded", function(event) {
       $.post(ajax_url, data, (res) => {
           console.log(res);
           if (res.success) {
-              document.cookie = encodeURIComponent('wp_auth') + '=' + encodeURIComponent(JSON.stringify(res.data))
-              document.location.reload();
-              return;
+              //document.cookie = encodeURIComponent('wp_auth') + '=' + encodeURIComponent(JSON.stringify(res.data))
+              fetch("api/auth/proxy_key", {
+                  method: "POST",
+                  credentials: true,
+                  headers: {
+                    'Content-Type': 'application/json'
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                  },
+                  body: JSON.stringify(res.data),
+              }).then((resp) => {return resp.json()}).then((data) => {
+                console.log(data);
+              });
           }
           if (res.data.error === "email") {
 
