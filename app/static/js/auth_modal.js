@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
               //document.cookie = encodeURIComponent('wp_auth') + '=' + encodeURIComponent(JSON.stringify(res.data))
               fetch("api/auth/proxy_key", {
                   method: "POST",
-                  credentials: true,
+                  credentials: 'include',
                   headers: {
                     'Content-Type': 'application/json'
                     // 'Content-Type': 'application/x-www-form-urlencoded',
