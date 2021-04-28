@@ -45,6 +45,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       const mailError = document.getElementById('err-email');
       const passErr = document.getElementById('err-pass');
 
+      console.log("I'm auth modal.js");
       window.addEventListener('message', (evt) => {
           console.log(evt.data);
       });
