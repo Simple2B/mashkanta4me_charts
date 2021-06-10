@@ -8,6 +8,7 @@ from app.models import WpAuthKey, User
 
 bp_api = Blueprint('api', __name__)
 
+
 @bp_api.route("/data/<string:chart_name>")
 def get_chart_data(chart_name: str):
     query_string = request.args.get('q')
