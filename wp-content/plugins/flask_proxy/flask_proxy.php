@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Flask Proxy auth
  * Description: Multiserver authentification with Flask and Wordpress
- * Version: 0.2
+ * Version: 1.1a
  * Author: Simple2b
  *
  */
@@ -28,7 +28,7 @@ function create_auth_key($user){
     $paid_roles = ['administrator'];
     $flask_role = "registered";
 
-    if( array_intersect($paid_roles, $user->roles ) ){
+    if( array_intersect($paid_roles, $user->roles ) or wcs_user_has_subscription( $user->ID, '', 'active' ) ){
         $flask_role = "paid";
     }
 
@@ -45,7 +45,6 @@ function create_auth_key($user){
 
 function create_tmp_key_table(){
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-
     global $wpdb;
     $tmp_keys_table_name = $wpdb->prefix . 'proxy_tmp_keys';
     $wp_users_table = $wpdb->prefix . 'users';
@@ -71,62 +70,85 @@ function create_tmp_key_table(){
     dbDelta( $sql );
 }
 
-function write_flask_key($user_login, $user) {
-    setcookie('wp_auth', create_auth_key($user), time() + (10 * 365 * 24 * 60 * 60), "/");
-}
-
 function flask_auth() {
   header('Content-Type: application/json');
   // check if POST data valid
-  $errors_args = [];
-
-  if ( empty($_POST['email'] ) || empty( $_POST['pass'] ) || empty($_POST['remember'])) {
-      $errors_args['error'] = 'Error data';
-      $errors_args['message'] = "Data is not valid";
-      wp_send_json_error( $errors_args );
-  }
-
-  $email = sanitize_email( $_POST['email'] );
-  $pass = sanitize_text_field( $_POST['pass'] );
-  $remember = $_POST['remember'];
-
-  // email check
-  if ( ! $email ) {
-      $errors_args['error'] = 'email';
-      $errors_args['message'] = 'invalid email';
-      wp_send_json_error( $errors_args );
-  }
-
-  $user = get_user_by('email', $email );
-  if ( ! $user ) {
-
-      $errors_args['error'] = 'email';
-      $errors_args['message'] = 'user not found';
-
-      wp_send_json_error( $errors_args );
-  }
-
-  if ( function_exists( 'user_verification_is_verified' ) && ! user_verification_is_verified( $user->ID ) ) {
-
-      $errors_args['error'] = 'email';
-      $errors_args['message'] = 'user not varified';
-      wp_send_json_error( $errors_args );
-  }
-
-  $success = wp_signon(['user_login' => $user->user_login, 'user_password' => $pass, 'remember' => $remember], true);
-    if (!is_wp_error($success)){
-        wp_send_json_success(create_auth_key($user));
-    }
-
-  $errors_args['error'] = 'pass';
-  $errors_args['message'] = $success->get_error_message();
-
-  wp_send_json_error( $errors_args );
+  $user = wp_get_current_user();
+  wp_send_json_success(["data"=> create_auth_key($user)]);
 }
 
-add_action('wp_login', 'write_flask_key', 10, 2);
-add_action('wp_ajax_flask_auth', 'flask_auth', 0);
+function get_my_role() {
+    if (is_user_logged_in()){
+        $user = wp_get_current_user();
+        $paid_roles = ['administrator'];
+
+        if( array_intersect($paid_roles, $user->roles ) or wcs_user_has_subscription( $user->ID, '', 'active' ) ){
+            wp_send_json_success(["role" => "paid"]);
+        } else {
+            wp_send_json_success(["role" => "registered"]);
+        }
+
+    }else {
+        wp_send_json_success(["role" => "unregistered"]);
+    }
+}
+
+function flask_proxy_js(){
+    ?>
+        <script>
+        function fetchAction(action, data, handler){
+            const actionData = new FormData;
+            actionData.append("action", action);
+            actionData.append("data", JSON.stringify(data));
+
+            fetch("/wp-admin/admin-ajax.php", {
+                method: "POST",
+                credentials: "include",
+                body: actionData,
+            }).then((resp) => {return resp.json()}).then(handler);
+        }
+
+        document.addEventListener('DOMContentLoaded', (e) => {
+            const iframe = document.querySelector("iframe");
+            if (iframe !== null){
+                fetchAction("get_my_role", {}, (resp) => {
+                    iframe.onload = function () {
+                        iframe.contentWindow.postMessage({"user_role": resp.data.role}, "*");
+                    }
+                })
+
+                window.addEventListener('message', (evt) => {
+                    if(evt.data === "reload"){
+                        document.location.reload();
+                    } else if(evt.data === "get_auth_key"){
+                        fetchAction("flask_auth", {}, (data) => {
+                            iframe.contentWindow.postMessage({"auth_key": data.data}, "*");
+                        })
+                    } else if (evt.data === "show_modal"){
+                        const loginWidget = document.querySelector("#user-header-login");
+                        loginWidget.click();
+                        window.scrollTo( 0, 0 );
+                    }
+                });
+            }
+        });
+        </script>
+    <?
+}
+
+function logout_flask(){
+    setcookie('flask_role', "unregistered", time() + (10 * 365 * 24 * 60 * 60), "/");
+}
+
+
+add_action('wp_logout', 'logout_flask');
+add_action('wp_ajax_flask_auth', 'flask_auth');
 add_action('wp_ajax_nopriv_flask_auth', 'flask_auth');
+
+add_action('wp_ajax_get_my_role', 'get_my_role');
+add_action('wp_ajax_nopriv_get_my_role', 'get_my_role');
+
+add_action('wp_enqueue_scripts', 'flask_proxy_js');
 
 add_filter('allowed_http_origins', 'add_allowed_origins');
 
